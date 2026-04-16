@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>DCA Calculator</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 8px;
+      border: none;
+    }
+    button {
+      background: #00c853;
+      color: #fff;
+      cursor: pointer;
+    }
+    canvas {
+      max-width: 100%;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>📊 DCA Calculator</h2>
+
+<input type="number" id="monthly" placeholder="เงินต่อเดือน (บาท)" value="2000"><br>
+<input type="number" id="startAge" placeholder="อายุเริ่มต้น" value="28"><br>
+<input type="number" id="endAge" placeholder="อายุสิ้นสุด" value="60"><br>
+<input type="number" id="rate" placeholder="ผลตอบแทน % ต่อปี" value="10"><br>
+
+<button onclick="calculate()">คำนวณ</button>
+
+<h3 id="result"></h3>
+
+<canvas id="chart"></canvas>
+
+<script>
+let chart;
+
+function calculate() {
+  const monthly = parseFloat(document.getElementById('monthly').value);
+  const startAge = parseInt(document.getElementById('startAge').value);
+  const endAge = parseInt(document.getElementById('endAge').value);
+  const rate = parseFloat(document.getElementById('rate').value) / 100;
+
+  const months = (endAge - startAge) * 12;
+  const monthlyRate = rate / 12;
+
+  let portfolio = 0;
+  let total = 0;
+
+  let labels = [];
+  let data = [];
+
+  let age = startAge;
+
+  for (let m = 1; m <= months; m++) {
+    portfolio = portfolio * (1 + monthlyRate) + monthly;
+    total += monthly;
+
+    if (m % 12 === 0) {
+      labels.push(age);
+      data.push(portfolio.toFixed(0));
+      age++;
+    }
+  }
+
+  document.getElementById('result').innerHTML =
+    "💰 เงินลงทุนรวม: " + total.toLocaleString() + " บาท<br>" +
+    "🚀 พอร์ตสุดท้าย: " + Math.round(portfolio).toLocaleString() + " บาท";
+
+  if (chart) chart.destroy();
+
+  const ctx = document.getElementById('chart').getContext('2d');
+
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'มูลค่าพอร์ต',
+        data: data,
+        borderWidth: 2,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: { color: 'white' }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: 'white' }
+        },
+        y: {
+          ticks: { color: 'white' }
+        }
+      }
+    }
+  });
+}
+</script>
+
+</body>
+</html>
