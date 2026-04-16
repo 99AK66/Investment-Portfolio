@@ -80,6 +80,9 @@ canvas {
 
 <div class="card">
 
+<label>ชื่อทรัพย์สิน</label>
+<input type="text" id="assetName" value="My Asset">
+
 <label>เลือกรูปแบบผลตอบแทน</label>
 <select id="preset" onchange="setRate()">
   <option value="5">ทั่วไป (5%)</option>
@@ -114,7 +117,7 @@ canvas {
 <script>
 let chart;
 
-// 🔥 preset control
+// preset control
 function setRate() {
   const preset = document.getElementById("preset").value;
   const rate = document.getElementById("rate");
@@ -129,6 +132,8 @@ function setRate() {
 }
 
 function calculate() {
+  const assetName = document.getElementById('assetName').value || "Asset";
+
   const monthly = parseFloat(document.getElementById('monthly').value);
   const startAge = parseInt(document.getElementById('startAge').value);
   const endAge = parseInt(document.getElementById('endAge').value);
@@ -162,7 +167,8 @@ function calculate() {
   }
 
   document.getElementById('result').innerHTML =
-    `💰 เงินลงทุนรวม: ${total.toLocaleString()} บาท<br>
+    `📌 ทรัพย์สิน: ${assetName}<br>
+     💰 เงินลงทุนรวม: ${total.toLocaleString()} บาท<br>
      🚀 พอร์ตสุดท้าย: ${Math.round(portfolio).toLocaleString()} บาท`;
 
   if (chart) chart.destroy();
@@ -172,7 +178,7 @@ function calculate() {
     data: {
       labels,
       datasets: [{
-        label: "มูลค่าพอร์ต",
+        label: `มูลค่าพอร์ต (${assetName})`,
         data,
         borderWidth: 2,
         tension: 0.3
