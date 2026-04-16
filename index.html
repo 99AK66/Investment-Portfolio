@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DCA Simulator Pro</title>
+<title>DCA Simulator</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -103,7 +103,7 @@ button {
 <!-- STEP 1 -->
 <div class="step active" id="step1">
   <label>ชื่อทรัพย์สิน</label>
-  <input id="assetName" placeholder="เช่น SPUS">
+  <input id="assetName" placeholder="เช่น AMD, SPUS">
 
   <div class="center-btn">
     <button class="primary" onclick="nextStep()">ต่อไป</button>
@@ -113,7 +113,7 @@ button {
 <!-- STEP 2 -->
 <div class="step" id="step2">
 <label>เงินลงทุนต่อเดือน</label>
-<input type="number" id="monthly" placeholder="500">
+<input type="number" id="monthly" placeholder="เช่น 500 บาท">
 
 <label>ผลตอบแทน (%)</label>
 
@@ -123,13 +123,13 @@ button {
   <button class="secondary" onclick="setRate(15)">เติบโตมาก 15%</button>
 </div>
 
-<input type="number" id="rate" placeholder="หรือกรอกเอง">
+<input type="number" id="rate" placeholder="กรอกผลตอบแทน (%) ที่คาดว่าจะได้รับต่อปี">
 
 <label>อายุเริ่มต้นลงทุน</label>
-<input type="number" id="startAge" placeholder="25">
+<input type="number" id="startAge" placeholder="25 ปี">
 
 <label>อายุคาดว่าจะเกษียณ</label>
-<input type="number" id="endAge" placeholder="60">
+<input type="number" id="endAge" placeholder="60 ปี">
 
 <div class="btn-row">
   <button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
@@ -140,7 +140,7 @@ button {
 <!-- STEP 3 -->
 <div class="step" id="step3">
 <label>เงินเฟ้อ (%)</label>
-<input type="number" id="inflation" placeholder="3">
+<input type="number" id="inflation" placeholder="เช่น 3 %">
 
 <div class="btn-row">
   <button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
@@ -151,10 +151,10 @@ button {
 <!-- STEP 4 -->
 <div class="step" id="step4">
 <label>ชื่อสินค้า</label>
-<input id="itemName" value="ข้าวแกง">
+<input id="itemName" placeholder="เช่น ข้าวแกง">
 
 <label>ราคาต่อหน่วย</label>
-<input type="number" id="itemPrice" value="40">
+<input type="number" id="itemPrice" placeholder="เช่น 30 บาท">
 
 <div class="btn-row">
   <button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
