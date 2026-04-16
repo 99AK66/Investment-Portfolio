@@ -2,89 +2,95 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>DCA Calculator Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DCA Mobile</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  color: #fff;
   margin: 0;
-  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0d0d0d;
+  color: #fff;
 }
 
-.container {
-  max-width: 420px;
-  margin: auto;
-  background: rgba(255,255,255,0.05);
-  padding: 20px;
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+/* HEADER */
+.header {
+  padding: 16px;
+  font-size: 20px;
+  font-weight: bold;
 }
 
-h2 {
-  margin-bottom: 20px;
+/* CARD */
+.card {
+  background: #1a1a1a;
+  margin: 12px;
+  padding: 16px;
+  border-radius: 16px;
 }
 
+/* INPUT */
 .input-group {
-  margin-bottom: 15px;
-  text-align: left;
+  margin-bottom: 16px;
 }
 
 label {
-  font-size: 14px;
-  opacity: 0.8;
+  font-size: 13px;
+  opacity: 0.7;
 }
 
 input, select {
   width: 100%;
-  padding: 12px;
-  margin-top: 5px;
-  border-radius: 10px;
+  padding: 14px;
+  margin-top: 6px;
+  border-radius: 12px;
   border: none;
-  background: rgba(255,255,255,0.1);
+  background: #2a2a2a;
   color: #fff;
+  font-size: 16px;
+}
+
+/* RESULT */
+.result {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* BUTTON FIXED */
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 12px;
+  background: #0d0d0d;
 }
 
 button {
   width: 100%;
-  padding: 12px;
-  border-radius: 12px;
+  padding: 16px;
+  border-radius: 14px;
   border: none;
+  font-size: 16px;
+  font-weight: bold;
   background: #00e676;
   color: #000;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
 }
 
-button:hover {
-  background: #00c853;
-}
-
-.result {
-  margin-top: 20px;
-  font-size: 16px;
-  background: rgba(0,0,0,0.3);
-  padding: 15px;
-  border-radius: 12px;
-}
-
+/* CHART */
 canvas {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-  <h2>📊 DCA Calculator</h2>
+<div class="header">📊 DCA Calculator</div>
+
+<div class="card">
 
   <div class="input-group">
-    <label>เงินต่อเดือน (บาท)</label>
+    <label>เงินต่อเดือน</label>
     <input type="number" id="monthly" value="0">
   </div>
 
@@ -99,25 +105,32 @@ canvas {
   </div>
 
   <div class="input-group">
-    <label>รูปแบบผลตอบแทน</label>
+    <label>เลือกผลตอบแทน</label>
     <select id="preset" onchange="setRate()">
       <option value="">-- เลือก --</option>
-      <option value="5">ทั่วไป (5%)</option>
-      <option value="10">ปานกลาง (10%)</option>
-      <option value="15">เติบโตสูง (15%)</option>
+      <option value="5">ทั่วไป 5%</option>
+      <option value="10">ปานกลาง 10%</option>
+      <option value="15">เติบโตสูง 15%</option>
     </select>
   </div>
 
   <div class="input-group">
-    <label>หรือกำหนด % เอง</label>
+    <label>หรือกำหนดเอง (%)</label>
     <input type="number" id="rate" value="0">
   </div>
 
-  <button onclick="calculate()">คำนวณ</button>
+</div>
 
-  <div class="result" id="result"></div>
+<div class="card result" id="result">
+  กรอกข้อมูลแล้วกด “คำนวณ”
+</div>
 
+<div class="card">
   <canvas id="chart"></canvas>
+</div>
+
+<div class="footer">
+  <button onclick="calculate()">คำนวณ</button>
 </div>
 
 <script>
@@ -137,7 +150,7 @@ function calculate() {
   const rate = parseFloat(document.getElementById('rate').value) / 100;
 
   if (endAge <= startAge) {
-    alert("อายุสิ้นสุดต้องมากกว่าเริ่มต้น");
+    alert("อายุไม่ถูกต้อง");
     return;
   }
 
@@ -164,8 +177,8 @@ function calculate() {
   }
 
   document.getElementById('result').innerHTML =
-    "💰 เงินลงทุนรวม: " + total.toLocaleString() + " บาท<br>" +
-    "🚀 พอร์ตสุดท้าย: " + Math.round(portfolio).toLocaleString() + " บาท";
+    `💰 ลงทุนรวม: ${total.toLocaleString()} บาท<br>
+     🚀 พอร์ต: ${Math.round(portfolio).toLocaleString()} บาท`;
 
   if (chart) chart.destroy();
 
@@ -174,10 +187,10 @@ function calculate() {
     data: {
       labels: labels,
       datasets: [{
-        label: 'มูลค่าพอร์ต',
+        label: 'พอร์ต',
         data: data,
         borderWidth: 3,
-        tension: 0.3
+        tension: 0.4
       }]
     },
     options: {
