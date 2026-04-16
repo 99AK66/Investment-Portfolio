@@ -131,67 +131,161 @@ function setRate() {
   }
 }
 
-function calculate() {
-  const assetName = document.getElementById('assetName').value || "SPUS";
+async function calculate() {
 
-  const monthly = parseFloat(document.getElementById('monthly').value);
-  const startAge = parseInt(document.getElementById('startAge').value);
-  const endAge = parseInt(document.getElementById('endAge').value);
-  const rate = parseFloat(document.getElementById('rate').value) / 100;
+  // =========================
+  // STEP 1: เลือกทรัพย์สิน
+  // =========================
+  const { value: assetName } = await Swal.fire({
+    title: "Step 1/5",
+    text: "เลือกทรัพย์สิน",
+    input: "text",
+    inputValue: "SPUS",
+    showCancelButton: true,
+    confirmButtonText: "ต่อไป"
+  });
 
-  const inflationInput = parseFloat(prompt("เงินเฟ้อ (% ต่อปี)", "3"));
-  const inflation = inflationInput / 100;
+  if (!assetName) return;
 
-  const itemPrice = parseFloat(prompt("ราคาสินค้า 1 หน่วย (บาท)", "40"));
-  const itemName = prompt("ชื่อสินค้า (เช่น ข้าวแกง)", "ข้าวแกง");
+  // =========================
+  // STEP 2: เงินลงทุน
+  // =========================
+  const { value: monthly } = await Swal.fire({
+    title: "Step 2/5",
+    text: "เงินลงทุนต่อเดือน (บาท)",
+    input: "number",
+    inputValue: 2000,
+    showCancelButton: true,
+    confirmButtonText: "ต่อไป"
+  });
 
-  if (!monthly || !startAge || !endAge || !rate || !itemPrice) {
-    alert("กรอกข้อมูลไม่ครบ");
-    return;
-  }
+  if (!monthly) return;
+
+  const { value: rate } = await Swal.fire({
+    title: "Step 2/5",
+    text: "ผลตอบแทนเฉลี่ยต่อปี (%)",
+    input: "number",
+    inputValue: 10,
+    showCancelButton: true,
+    confirmButtonText: "ต่อไป"
+  });
+
+  if (!rate) return;
+
+  const { value: startAge } = await Swal.fire({
+    title: "Step 2/5",
+    text: "อายุเริ่มต้น",
+    input: "number",
+    inputValue: 28,
+    showCancelButton: true,
+    confirmButtonText: "ต่อไป"
+  });
+
+  const { value: endAge } = await Swal.fire({
+    title: "Step 2/5",
+    text: "อายุสิ้นสุด",
+    input: "number",
+    inputValue: 60,
+    showCancelButton: true,
+    confirmButtonText: "ต่อไป"
+  });
+
+  if (!startAge || !endAge) return;
+
+  // =========================
+  // STEP 3: เงินเฟ้อ
+  // =========================
+  const { value: inflationInput } = await Swal.fire({
+    title: "Step 3/5",
+    text: "เงินเฟ้อเฉลี่ยต่อปี (%)",
+    input: "number",
+    inputValue: 3,
+    showCancelButton: true,
+    confirmButtonText: "ต่อไป"
+  });
+
+  if (!inflationInput) return;
+
+  const inflation = parseFloat(inflationInput) / 100;
+
+  // =========================
+  // STEP 4: สินค้า
+  // =========================
+  const { value: itemName } = await Swal.fire({
+    title: "Step 4/5",
+    text: "ชื่อสินค้า (เช่น ข้าวแกง, iPhone)",
+    input: "text",
+    inputValue: "ข้าวแกง",
+    showCancelButton: true,
+    confirmButtonText: "ต่อไป"
+  });
+
+  const { value: itemPrice } = await Swal.fire({
+    title: "Step 4/5",
+    text: "ราคาสินค้า 1 หน่วย (บาท)",
+    input: "number",
+    inputValue: 40,
+    showCancelButton: true,
+    confirmButtonText: "สรุป"
+  });
+
+  if (!itemName || !itemPrice) return;
+
+  // =========================
+  // STEP 5: คำนวณ + สรุป
+  // =========================
 
   const months = (endAge - startAge) * 12;
-
-  const monthlyRate = rate / 12;
+  const monthlyRate = (rate / 100) / 12;
   const inflationRate = inflation / 12;
 
-  let portfolio = 0; // SPUS
-  let cash = 0;      // เงินสด
+  let portfolio = 0;
+  let cash = 0;
 
   let labels = [];
   let spusData = [];
   let cashData = [];
   let buyingPowerData = [];
 
-  let age = startAge;
+  let age = parseInt(startAge);
 
   for (let m = 1; m <= months; m++) {
 
-    // 📈 SPUS
-    portfolio = portfolio * (1 + monthlyRate) + monthly;
+    // 📈 ลงทุน
+    portfolio = portfolio * (1 + monthlyRate) + parseFloat(monthly);
 
-    // 💰 เงินสด (โดนเงินเฟ้อ)
-    cash = (cash + monthly) / (1 + inflationRate);
+    // 💰 เงินสดโดนเงินเฟ้อ
+    cash = (cash + parseFloat(monthly)) / (1 + inflationRate);
 
     if (m % 12 === 0) {
       labels.push(age);
 
       spusData.push(Math.round(portfolio));
       cashData.push(Math.round(cash));
-
-      // 🛒 กำลังซื้อเงินสด (ของที่ซื้อได้)
       buyingPowerData.push(Math.round(cash / itemPrice));
 
       age++;
     }
   }
 
-  document.getElementById('result').innerHTML =
-    `📌 ทรัพย์สิน: ${assetName}<br>
-     📈 SPUS: ${Math.round(portfolio).toLocaleString()} บาท<br>
-     💰 เงินสดจริง (โดนเงินเฟ้อ): ${Math.round(cash).toLocaleString()} บาท<br>
-     🛒 ซื้อ ${itemName} ได้: ${Math.round(cash / itemPrice).toLocaleString()} หน่วย`;
+  // =========================
+  // RESULT (สรุป)
+  // =========================
+  Swal.fire({
+    icon: "success",
+    title: "สรุปผลการจำลอง",
+    html: `
+      📌 <b>${assetName}</b><br><br>
+      📈 พอร์ตลงทุน: ${Math.round(portfolio).toLocaleString()} บาท<br>
+      💰 เงินสดจริง: ${Math.round(cash).toLocaleString()} บาท<br>
+      🛒 ซื้อ ${itemName}: ${Math.round(cash / itemPrice)} หน่วย<br><br>
+      📊 ดูกราฟด้านล่างได้เลย
+    `
+  });
 
+  // =========================
+  // CHART
+  // =========================
   if (chart) chart.destroy();
 
   chart = new Chart(document.getElementById("chart"), {
@@ -200,14 +294,14 @@ function calculate() {
       labels,
       datasets: [
         {
-          label: "SPUS (ลงทุน)",
+          label: `${assetName} (ลงทุน)`,
           data: spusData,
           borderWidth: 2
         },
         {
-          label: "เงินสดจริง",
+          label: "เงินสดจริง (โดนเงินเฟ้อ)",
           data: cashData,
-          borderDash: [5,5],
+          borderDash: [6, 4],
           borderWidth: 2
         },
         {
@@ -233,6 +327,6 @@ function calculate() {
 // init
 setRate();
 </script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
