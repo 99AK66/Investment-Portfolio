@@ -103,7 +103,7 @@ button {
 <!-- STEP 1 -->
 <div class="step active" id="step1">
   <label>ชื่อทรัพย์สิน</label>
-  <input id="assetName" value="SPUS">
+  <input id="assetName" placeholder="เช่น SPUS">
 
   <div class="center-btn">
     <button class="primary" onclick="nextStep()">ต่อไป</button>
@@ -113,7 +113,7 @@ button {
 <!-- STEP 2 -->
 <div class="step" id="step2">
 <label>เงินลงทุนต่อเดือน</label>
-<input type="number" id="monthly" value="2000">
+<input type="number" id="monthly" placeholder="500">
 
 <label>ผลตอบแทน (%)</label>
 
@@ -123,13 +123,13 @@ button {
   <button class="secondary" onclick="setRate(15)">เติบโตมาก 15%</button>
 </div>
 
-<input type="number" id="rate" value="10" placeholder="หรือกรอกเอง">
+<input type="number" id="rate" placeholder="หรือกรอกเอง">
 
 <label>อายุเริ่มต้นลงทุน</label>
-<input type="number" id="startAge" value="28">
+<input type="number" id="startAge" placeholder="25">
 
 <label>อายุคาดว่าจะเกษียณ</label>
-<input type="number" id="endAge" value="60">
+<input type="number" id="endAge" placeholder="60">
 
 <div class="btn-row">
   <button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
@@ -140,7 +140,7 @@ button {
 <!-- STEP 3 -->
 <div class="step" id="step3">
 <label>เงินเฟ้อ (%)</label>
-<input type="number" id="inflation" value="3">
+<input type="number" id="inflation" placeholder="3">
 
 <div class="btn-row">
   <button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
