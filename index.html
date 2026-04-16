@@ -26,6 +26,7 @@
 
     h2 {
       margin-bottom: 20px;
+      text-align: center;
     }
 
     .card {
@@ -35,11 +36,17 @@
       margin-bottom: 15px;
     }
 
-    input {
+    label {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    input, select {
       width: 100%;
       padding: 14px;
-      margin-top: 8px;
-      margin-bottom: 12px;
+      margin-top: 6px;
       border-radius: 10px;
       border: none;
       font-size: 16px;
@@ -48,6 +55,7 @@
     button {
       width: 100%;
       padding: 16px;
+      margin-top: 10px;
       border-radius: 12px;
       border: none;
       background: #00c853;
@@ -58,12 +66,13 @@
     }
 
     button:active {
-      opacity: 0.8;
+      opacity: 0.85;
     }
 
     #result {
-      margin-top: 15px;
+      margin-top: 10px;
       line-height: 1.6;
+      font-size: 16px;
     }
 
     canvas {
@@ -79,6 +88,7 @@
   <h2>📊 DCA Calculator</h2>
 
   <div class="card">
+
     <label>เงินต่อเดือน (บาท)</label>
     <input type="number" id="monthly" value="2000">
 
@@ -88,14 +98,23 @@
     <label>อายุสิ้นสุด</label>
     <input type="number" id="endAge" value="60">
 
-    <label>ผลตอบแทน % ต่อปี</label>
+    <label>รูปแบบผลตอบแทน</label>
+    <select id="preset" onchange="setRate()">
+      <option value="5">ทั่วไป (5%)</option>
+      <option value="10" selected>ปานกลาง (10%)</option>
+      <option value="13">เติบโตสูง (13%)</option>
+      <option value="custom">กำหนดเอง</option>
+    </select>
+
+    <label>ผลตอบแทน (% ต่อปี)</label>
     <input type="number" id="rate" value="10">
 
     <button onclick="calculate()">คำนวณ</button>
+
   </div>
 
   <div class="card">
-    <h3 id="result"></h3>
+    <div id="result"></div>
     <canvas id="chart"></canvas>
   </div>
 
@@ -103,6 +122,19 @@
 
 <script>
 let chart;
+
+function setRate() {
+  const preset = document.getElementById('preset').value;
+  const rateInput = document.getElementById('rate');
+
+  if (preset === 'custom') {
+    rateInput.disabled = false;
+    rateInput.focus();
+  } else {
+    rateInput.value = preset;
+    rateInput.disabled = true;
+  }
+}
 
 function calculate() {
   const monthly = parseFloat(document.getElementById('monthly').value);
@@ -127,7 +159,7 @@ function calculate() {
 
     if (m % 12 === 0) {
       labels.push(age);
-      data.push(portfolio.toFixed(0));
+      data.push(Math.round(portfolio));
       age++;
     }
   }
@@ -169,6 +201,9 @@ function calculate() {
     }
   });
 }
+
+// init ให้ disabled ตอนโหลด
+setRate();
 </script>
 
 </body>
