@@ -7,13 +7,11 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       background: #111;
       color: #fff;
     }
@@ -24,11 +22,6 @@
       padding: 20px;
     }
 
-    h2 {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
     .card {
       background: #1c1c1c;
       padding: 15px;
@@ -36,14 +29,16 @@
       margin-bottom: 15px;
     }
 
+    h2 { text-align: center; }
+
     label {
-      display: block;
       margin-top: 10px;
+      display: block;
       font-size: 14px;
       opacity: 0.8;
     }
 
-    input, select {
+    input {
       width: 100%;
       padding: 14px;
       margin-top: 6px;
@@ -54,29 +49,23 @@
 
     button {
       width: 100%;
-      padding: 16px;
+      padding: 14px;
       margin-top: 10px;
-      border-radius: 12px;
+      border-radius: 10px;
       border: none;
       background: #00c853;
       color: #fff;
-      font-size: 18px;
-      font-weight: bold;
+      font-size: 16px;
       cursor: pointer;
     }
 
-    button:active {
-      opacity: 0.85;
+    button.secondary {
+      background: #2962ff;
     }
 
     #result {
       margin-top: 10px;
       line-height: 1.6;
-      font-size: 16px;
-    }
-
-    canvas {
-      margin-top: 20px;
     }
   </style>
 </head>
@@ -84,10 +73,17 @@
 <body>
 
 <div class="container">
-
   <h2>📊 DCA Calculator</h2>
 
   <div class="card">
+
+    <label>ชื่อทรัพย์สิน (เช่น AAPL, TSLA, SPUS)</label>
+    <input type="text" id="symbol" placeholder="เช่น SPUS">
+
+    <button class="secondary" onclick="fetchReturn()">📡 ดึงผลตอบแทน 1 ปี</button>
+
+    <label>ผลตอบแทน (% ต่อปี)</label>
+    <input type="number" id="rate" value="10">
 
     <label>เงินต่อเดือน (บาท)</label>
     <input type="number" id="monthly" value="2000">
@@ -98,17 +94,6 @@
     <label>อายุสิ้นสุด</label>
     <input type="number" id="endAge" value="60">
 
-    <label>รูปแบบผลตอบแทน</label>
-    <select id="preset" onchange="setRate()">
-      <option value="5">ทั่วไป (5%)</option>
-      <option value="10" selected>ปานกลาง (10%)</option>
-      <option value="13">เติบโตสูง (13%)</option>
-      <option value="custom">กำหนดเอง</option>
-    </select>
-
-    <label>ผลตอบแทน (% ต่อปี)</label>
-    <input type="number" id="rate" value="10">
-
     <button onclick="calculate()">คำนวณ</button>
 
   </div>
@@ -117,22 +102,39 @@
     <div id="result"></div>
     <canvas id="chart"></canvas>
   </div>
-
 </div>
 
 <script>
 let chart;
 
-function setRate() {
-  const preset = document.getElementById('preset').value;
-  const rateInput = document.getElementById('rate');
+// 🔥 ดึงข้อมูลหุ้น (ผ่าน proxy ฟรี)
+async function fetchReturn() {
+  const symbol = document.getElementById("symbol").value;
 
-  if (preset === 'custom') {
-    rateInput.disabled = false;
-    rateInput.focus();
-  } else {
-    rateInput.value = preset;
-    rateInput.disabled = true;
+  if (!symbol) {
+    alert("กรุณาใส่ชื่อหุ้น");
+    return;
+  }
+
+  try {
+    const url = `https://api.allorigins.win/raw?url=https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1y&interval=1mo`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    const prices = data.chart.result[0].indicators.quote[0].close;
+
+    const first = prices.find(p => p !== null);
+    const last = prices.reverse().find(p => p !== null);
+
+    const returnPercent = ((last - first) / first) * 100;
+
+    document.getElementById("rate").value = returnPercent.toFixed(2);
+
+    alert(`📈 ผลตอบแทน 1 ปี ≈ ${returnPercent.toFixed(2)}%`);
+
+  } catch (e) {
+    alert("❌ ดึงข้อมูลไม่ได้ (ลองเปลี่ยน symbol)");
   }
 }
 
@@ -186,24 +188,15 @@ function calculate() {
     options: {
       responsive: true,
       plugins: {
-        legend: {
-          labels: { color: 'white' }
-        }
+        legend: { labels: { color: 'white' } }
       },
       scales: {
-        x: {
-          ticks: { color: 'white' }
-        },
-        y: {
-          ticks: { color: 'white' }
-        }
+        x: { ticks: { color: 'white' } },
+        y: { ticks: { color: 'white' } }
       }
     }
   });
 }
-
-// init ให้ disabled ตอนโหลด
-setRate();
 </script>
 
 </body>
