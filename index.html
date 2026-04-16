@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DCA Reality Simulator</title>
+<title>DCA Simulator Pro</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -12,34 +12,25 @@
 
 body {
   margin: 0;
-  font-family: system-ui, Arial;
+  font-family: system-ui;
   background: radial-gradient(circle at top, #1a1a1a, #0d0d0d);
   color: #fff;
 }
 
 .container {
-  max-width: 480px;
+  max-width: 500px;
   margin: auto;
   padding: 20px;
 }
 
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
+h2 { text-align: center; }
 
 .card {
-  background: rgba(28,28,28,0.85);
+  background: rgba(30,30,30,0.85);
   backdrop-filter: blur(10px);
   padding: 16px;
   border-radius: 16px;
   margin-bottom: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-  transition: 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-2px);
 }
 
 label {
@@ -51,27 +42,22 @@ label {
 
 input {
   width: 100%;
-  padding: 14px;
-  margin-top: 6px;
-  border-radius: 12px;
+  padding: 12px;
+  margin-top: 5px;
+  border-radius: 10px;
   border: none;
-  font-size: 15px;
   background: #2a2a2a;
   color: #fff;
 }
 
 button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 10px;
-  border-radius: 12px;
+  padding: 12px;
   border: none;
-  font-size: 16px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: 0.2s;
+  font-size: 14px;
+  flex: 1;
 }
-
-button:hover { transform: scale(1.02); }
 
 .primary {
   background: linear-gradient(135deg,#00c853,#00e676);
@@ -80,8 +66,14 @@ button:hover { transform: scale(1.02); }
 }
 
 .secondary {
-  background: #2c2c2c;
+  background: #333;
   color: #fff;
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .step { display: none; }
@@ -89,12 +81,6 @@ button:hover { transform: scale(1.02); }
 
 #resultCard, #chartCard {
   display: none;
-  animation: fadeIn 0.4s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 </style>
 </head>
@@ -103,14 +89,14 @@ button:hover { transform: scale(1.02); }
 
 <div class="container">
 
-<h2>📊 DCA Reality Simulator</h2>
+<h2>📊 DCA Simulator Pro</h2>
 
 <div class="card">
 
 <!-- STEP 1 -->
 <div class="step active" id="step1">
 <label>ชื่อทรัพย์สิน</label>
-<input type="text" id="assetName" value="SPUS">
+<input id="assetName" value="SPUS">
 <button class="primary" onclick="nextStep()">ต่อไป</button>
 </div>
 
@@ -119,45 +105,54 @@ button:hover { transform: scale(1.02); }
 <label>เงินลงทุนต่อเดือน</label>
 <input type="number" id="monthly" value="2000">
 
-<label>ผลตอบแทน (% ต่อปี)</label>
+<label>ผลตอบแทน (%)</label>
 <input type="number" id="rate" value="10">
 
-<label>อายุเริ่มต้น</label>
+<label>อายุเริ่ม</label>
 <input type="number" id="startAge" value="28">
 
-<label>อายุสิ้นสุด</label>
+<label>อายุจบ</label>
 <input type="number" id="endAge" value="60">
 
-<button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
-<button class="primary" onclick="nextStep()">ต่อไป</button>
+<div class="btn-row">
+  <button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
+  <button class="primary" onclick="nextStep()">ต่อไป</button>
+</div>
 </div>
 
 <!-- STEP 3 -->
 <div class="step" id="step3">
-<label>เงินเฟ้อ (% ต่อปี)</label>
+<label>เงินเฟ้อ (%)</label>
 <input type="number" id="inflation" value="3">
 
-<button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
-<button class="primary" onclick="nextStep()">ต่อไป</button>
+<div class="btn-row">
+  <button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
+  <button class="primary" onclick="nextStep()">ต่อไป</button>
+</div>
 </div>
 
 <!-- STEP 4 -->
 <div class="step" id="step4">
 <label>ชื่อสินค้า</label>
-<input type="text" id="itemName" value="ข้าวแกง">
+<input id="itemName" value="ข้าวแกง">
 
-<label>ราคาสินค้า 1 หน่วย</label>
+<label>ราคาต่อหน่วย</label>
 <input type="number" id="itemPrice" value="40">
 
-<button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
-<button class="primary" onclick="nextStep()">ต่อไป</button>
+<div class="btn-row">
+  <button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
+  <button class="primary" onclick="nextStep()">ต่อไป</button>
+</div>
 </div>
 
 <!-- STEP 5 -->
 <div class="step" id="step5">
 <h3>พร้อมคำนวณ</h3>
-<button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
-<button class="primary" onclick="calculate()">คำนวณผลลัพธ์</button>
+
+<div class="btn-row">
+  <button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
+  <button class="primary" onclick="calculate()">คำนวณ</button>
+</div>
 </div>
 
 </div>
@@ -179,107 +174,124 @@ button:hover { transform: scale(1.02); }
 let chart;
 let currentStep = 1;
 
-hideResultUI(); // ซ่อนตอนเริ่ม
+hideResult();
 
-function showStep(step) {
-  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-  document.getElementById('step' + step).classList.add('active');
+function showStep(s){
+  document.querySelectorAll('.step').forEach(e=>e.classList.remove('active'));
+  document.getElementById('step'+s).classList.add('active');
 }
 
-function nextStep() {
-  if (currentStep < 5) currentStep++;
-  showStep(currentStep);
-}
-
-function prevStep() {
-  if (currentStep > 1) currentStep--;
+function nextStep(){
+  if(currentStep < 5) currentStep++;
   showStep(currentStep);
 
-  if (currentStep < 5) {
-    hideResultUI();
+  if(currentStep !== 5){
+    hideResult();
   }
 }
 
-function showResultUI() {
+function prevStep(){
+  if(currentStep > 1) currentStep--;
+  showStep(currentStep);
+
+  if(currentStep !== 5){
+    hideResult();
+  }
+}
+
+function showResult(){
   document.getElementById("resultCard").style.display = "block";
   document.getElementById("chartCard").style.display = "block";
 }
 
-function hideResultUI() {
+function hideResult(){
   document.getElementById("resultCard").style.display = "none";
   document.getElementById("chartCard").style.display = "none";
 }
 
-function calculate() {
+function animate(chart, labels, invest, cash){
+
+  let i = 0;
+
+  const timer = setInterval(() => {
+
+    if(i >= labels.length){
+      clearInterval(timer);
+      return;
+    }
+
+    chart.data.labels.push(labels[i]);
+    chart.data.datasets[0].data.push(invest[i]);
+    chart.data.datasets[1].data.push(cash[i]);
+
+    chart.update();
+
+    i++;
+
+  }, 200);
+}
+
+function calculate(){
 
   const assetName = document.getElementById('assetName').value;
-  const monthly = parseFloat(document.getElementById('monthly').value);
-  const rate = parseFloat(document.getElementById('rate').value) / 100;
-  const startAge = parseInt(document.getElementById('startAge').value);
-  const endAge = parseInt(document.getElementById('endAge').value);
+  const monthly = +document.getElementById('monthly').value;
+  const rate = +document.getElementById('rate').value / 100;
+  const startAge = +document.getElementById('startAge').value;
+  const endAge = +document.getElementById('endAge').value;
 
-  const inflation = parseFloat(document.getElementById('inflation').value) / 100;
+  const inflation = +document.getElementById('inflation').value / 100;
 
   const itemName = document.getElementById('itemName').value;
-  const itemPrice = parseFloat(document.getElementById('itemPrice').value);
+  const itemPrice = +document.getElementById('itemPrice').value;
 
   const months = (endAge - startAge) * 12;
-  const monthlyRate = rate / 12;
-  const inflationRate = inflation / 12;
 
-  let portfolio = 0;
+  const r = rate / 12;
+  const inf = inflation / 12;
+
+  let port = 0;
   let cash = 0;
 
   let labels = [];
-  let investData = [];
-  let cashData = [];
+  let invest = [];
+  let cashArr = [];
 
   let age = startAge;
 
-  for (let m = 1; m <= months; m++) {
+  for(let m=1;m<=months;m++){
 
-    portfolio = portfolio * (1 + monthlyRate) + monthly;
-    cash = (cash + monthly) / (1 + inflationRate);
+    port = port * (1 + r) + monthly;
+    cash = (cash + monthly) / (1 + inf);
 
-    if (m % 12 === 0) {
+    if(m % 12 === 0){
       labels.push(age);
-      investData.push(Math.round(portfolio));
-      cashData.push(Math.round(cash));
+      invest.push(Math.round(port));
+      cashArr.push(Math.round(cash));
       age++;
     }
   }
 
-  const investPower = Math.round(portfolio / itemPrice);
-  const cashPower = Math.round(cash / itemPrice);
-  const ratio = (investPower / cashPower).toFixed(1);
+  const investUnits = Math.round(port / itemPrice);
+  const cashUnits = Math.round(cash / itemPrice);
+  const ratio = (investUnits / cashUnits).toFixed(1);
 
-  document.getElementById('result').innerHTML = `
+  document.getElementById("result").innerHTML = `
 📌 <b>${assetName}</b><br><br>
 
-💰 เงินสดซื้อ ${itemName}: <b>${cashPower.toLocaleString()}</b><br>
-📈 ลงทุนซื้อ ${itemName}: <b>${investPower.toLocaleString()}</b><br><br>
-
+💰 ถ้าเก็บเงินสดซื้อ ${itemName}: <b>${cashUnits}</b> หน่วย<br>
+📈 ถ้าลงทุนใน ${assetName} ซื้อ ${itemName}: <b>${investUnits}</b> หน่วย<br>
 ⚠️ ต่างกัน: <b>${ratio} เท่า</b>
 `;
 
-  if (chart) chart.destroy();
+  if(chart) chart.destroy();
 
   chart = new Chart(document.getElementById("chart"), {
     type: "line",
     data: {
-      labels,
+      labels: [],
       datasets: [
-        {
-          label: assetName,
-          data: investData,
-          borderWidth: 2
-        },
-        {
-          label: "เงินสด (เงินเฟ้อ)",
-          data: cashData,
-          borderDash: [5,5],
-          borderWidth: 2
-        }
+        { label: assetName, data: [], borderWidth: 2 },
+        { label: "เงินสด", data: [], borderDash: [5,5], borderWidth: 2 }
       ]
     },
     options: {
@@ -294,9 +306,11 @@ function calculate() {
     }
   });
 
-  showResultUI();   // ✅ เปิดกราฟ
+  showResult();
   currentStep = 5;
   showStep(5);
+
+  animate(chart, labels, invest, cashArr);
 }
 
 </script>
