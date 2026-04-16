@@ -82,6 +82,13 @@ button {
 #resultCard, #chartCard {
   display: none;
 }
+
+  .center-btn {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+  
 </style>
 </head>
 
@@ -95,9 +102,12 @@ button {
 
 <!-- STEP 1 -->
 <div class="step active" id="step1">
-<label>ชื่อทรัพย์สิน</label>
-<input id="assetName" value="SPUS">
-<button class="primary" onclick="nextStep()">ต่อไป</button>
+  <label>ชื่อทรัพย์สิน</label>
+  <input id="assetName" value="SPUS">
+
+  <div class="center-btn">
+    <button class="primary" onclick="nextStep()">ต่อไป</button>
+  </div>
 </div>
 
 <!-- STEP 2 -->
@@ -106,12 +116,19 @@ button {
 <input type="number" id="monthly" value="2000">
 
 <label>ผลตอบแทน (%)</label>
-<input type="number" id="rate" value="10">
 
-<label>อายุเริ่ม</label>
+<div class="btn-row">
+  <button class="secondary" onclick="setRate(5)">ทั่วไป 5%</button>
+  <button class="secondary" onclick="setRate(10)">ปานกลาง 10%</button>
+  <button class="secondary" onclick="setRate(15)">เติบโตมาก 15%</button>
+</div>
+
+<input type="number" id="rate" value="10" placeholder="หรือกรอกเอง">
+
+<label>อายุเริ่มต้นลงทุน</label>
 <input type="number" id="startAge" value="28">
 
-<label>อายุจบ</label>
+<label>อายุคาดว่าจะเกษียณ</label>
 <input type="number" id="endAge" value="60">
 
 <div class="btn-row">
@@ -175,6 +192,10 @@ let chart;
 let currentStep = 1;
 
 hideResult();
+
+  function setRate(value){
+  document.getElementById("rate").value = value;
+}
 
 function showStep(s){
   document.querySelectorAll('.step').forEach(e=>e.classList.remove('active'));
