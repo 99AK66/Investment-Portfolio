@@ -1,205 +1,67 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DCA Pro</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #0d0d0d;
-  color: #fff;
-  overflow: hidden;
-}
-
-/* SLIDE CONTAINER */
-.wrapper {
-  display: flex;
-  width: 200%;
-  transition: transform 0.4s ease;
-}
-
-.page {
-  width: 100%;
-  padding: 16px;
-  box-sizing: border-box;
-}
-
-/* CARD */
-.card {
-  background: #1a1a1a;
-  padding: 16px;
-  border-radius: 16px;
-  margin-bottom: 16px;
-}
-
-/* INPUT */
-input, select {
-  width: 100%;
-  padding: 14px;
-  border-radius: 12px;
-  border: none;
-  background: #2a2a2a;
-  color: #fff;
-  margin-top: 6px;
-  margin-bottom: 12px;
-  font-size: 16px;
-}
-
-/* BUTTON */
-button {
-  width: 100%;
-  padding: 16px;
-  border-radius: 14px;
-  border: none;
-  background: #00e676;
-  font-weight: bold;
-}
-
-/* RESULT */
-.result {
-  font-size: 16px;
-  line-height: 1.6;
-}
-
-/* CHART */
-.chart-box {
-  height: 300px;
-}
-
-/* NAV DOT */
-.nav {
-  position: fixed;
-  bottom: 70px;
-  width: 100%;
-  text-align: center;
-}
-
-.dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  margin: 4px;
-  background: #555;
-  border-radius: 50%;
-}
-
-.active {
-  background: #00e676;
-}
-
-/* FOOTER */
-.footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  padding: 10px;
-  background: #0d0d0d;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>DCA Calculator</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 8px;
+      border: none;
+    }
+    button {
+      background: #00c853;
+      color: #fff;
+      cursor: pointer;
+    }
+    canvas {
+      max-width: 100%;
+      margin-top: 20px;
+    }
+  </style>
 </head>
-
 <body>
 
-<div id="wrapper" class="wrapper">
+<h2>📊 DCA Calculator</h2>
 
-  <!-- PAGE 1 -->
-  <div class="page">
-    <h2>📊 ตั้งค่า</h2>
+<input type="number" id="monthly" placeholder="เงินต่อเดือน (บาท)" value="2000"><br>
+<input type="number" id="startAge" placeholder="อายุเริ่มต้น" value="28"><br>
+<input type="number" id="endAge" placeholder="อายุสิ้นสุด" value="60"><br>
+<input type="number" id="rate" placeholder="ผลตอบแทน % ต่อปี" value="10"><br>
 
-    <div class="card">
-      <label>เงินต่อเดือน</label>
-      <input type="number" id="monthly" value="0">
+<button onclick="calculate()">คำนวณ</button>
 
-      <label>อายุเริ่มต้น</label>
-      <input type="number" id="startAge" value="0">
+<h3 id="result"></h3>
 
-      <label>อายุสิ้นสุด</label>
-      <input type="number" id="endAge" value="0">
-
-      <label>ผลตอบแทน</label>
-      <select id="preset" onchange="setRate()">
-        <option value="">-- เลือก --</option>
-        <option value="5">5%</option>
-        <option value="10">10%</option>
-        <option value="15">15%</option>
-      </select>
-
-      <input type="number" id="rate" value="0">
-    </div>
-  </div>
-
-  <!-- PAGE 2 -->
-  <div class="page">
-    <h2>📈 ผลลัพธ์</h2>
-
-    <div class="card result" id="result"></div>
-
-    <div class="card">
-      <div class="chart-box">
-        <canvas id="chart"></canvas>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- DOT -->
-<div class="nav">
-  <span class="dot active" id="dot1"></span>
-  <span class="dot" id="dot2"></span>
-</div>
-
-<!-- BUTTON -->
-<div class="footer">
-  <button onclick="calculate()">คำนวณ</button>
-</div>
+<canvas id="chart"></canvas>
 
 <script>
 let chart;
-let currentPage = 0;
-
-// swipe
-let startX = 0;
-
-document.addEventListener("touchstart", e => {
-  startX = e.touches[0].clientX;
-});
-
-document.addEventListener("touchend", e => {
-  let endX = e.changedTouches[0].clientX;
-  if (startX - endX > 50) goPage(1);
-  if (endX - startX > 50) goPage(0);
-});
-
-function goPage(page) {
-  currentPage = page;
-  document.getElementById("wrapper").style.transform =
-    `translateX(-${page * 50}%)`;
-
-  document.getElementById("dot1").classList.toggle("active", page === 0);
-  document.getElementById("dot2").classList.toggle("active", page === 1);
-}
-
-function setRate() {
-  const preset = document.getElementById("preset").value;
-  if (preset) document.getElementById("rate").value = preset;
-}
 
 function calculate() {
-  const monthly = +document.getElementById('monthly').value;
-  const startAge = +document.getElementById('startAge').value;
-  const endAge = +document.getElementById('endAge').value;
-  const rate = +document.getElementById('rate').value / 100;
+  const monthly = parseFloat(document.getElementById('monthly').value);
+  const startAge = parseInt(document.getElementById('startAge').value);
+  const endAge = parseInt(document.getElementById('endAge').value);
+  const rate = parseFloat(document.getElementById('rate').value) / 100;
 
   const months = (endAge - startAge) * 12;
   const monthlyRate = rate / 12;
 
-  let portfolio = 0, total = 0;
-  let labels = [], data = [];
+  let portfolio = 0;
+  let total = 0;
+
+  let labels = [];
+  let data = [];
+
   let age = startAge;
 
   for (let m = 1; m <= months; m++) {
@@ -208,49 +70,44 @@ function calculate() {
 
     if (m % 12 === 0) {
       labels.push(age);
-      data.push(Math.round(portfolio));
+      data.push(portfolio.toFixed(0));
       age++;
     }
   }
 
-  document.getElementById("result").innerHTML =
-    `💰 ลงทุนรวม: ${total.toLocaleString()} บาท<br>
-     🚀 พอร์ต: ${Math.round(portfolio).toLocaleString()} บาท`;
+  document.getElementById('result').innerHTML =
+    "💰 เงินลงทุนรวม: " + total.toLocaleString() + " บาท<br>" +
+    "🚀 พอร์ตสุดท้าย: " + Math.round(portfolio).toLocaleString() + " บาท";
 
-  // ไปหน้าผลลัพธ์
-  goPage(1);
-
-  // delay เล็กน้อยให้หน้า slide ก่อนแล้ว animate กราฟ
-  setTimeout(() => {
-    drawChart(labels, data);
-    document.getElementById("chart").scrollIntoView({ behavior: "smooth" });
-  }, 300);
-}
-
-function drawChart(labels, data) {
   if (chart) chart.destroy();
 
-  chart = new Chart(document.getElementById('chart'), {
+  const ctx = document.getElementById('chart').getContext('2d');
+
+  chart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: labels,
       datasets: [{
+        label: 'มูลค่าพอร์ต',
         data: data,
-        borderWidth: 3,
-        tension: 0.4
+        borderWidth: 2,
+        tension: 0.3
       }]
     },
     options: {
-      animation: {
-        duration: 1200,
-        easing: 'easeOutQuart'
-      },
+      responsive: true,
       plugins: {
-        legend: { display: false }
+        legend: {
+          labels: { color: 'white' }
+        }
       },
       scales: {
-        x: { ticks: { color: "#fff" } },
-        y: { ticks: { color: "#fff" } }
+        x: {
+          ticks: { color: 'white' }
+        },
+        y: {
+          ticks: { color: 'white' }
+        }
       }
     }
   });
