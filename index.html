@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DCA Reality Simulator</title>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -108,7 +109,7 @@ button:hover { transform: scale(1.02); }
 
 <!-- STEP 1 -->
 <div class="step active" id="step1">
-<label>ชื่อทรัพย์สิน (เช่น SPUS)</label>
+<label>ชื่อทรัพย์สิน</label>
 <input type="text" id="assetName" value="SPUS">
 <button class="primary" onclick="nextStep()">ต่อไป</button>
 </div>
@@ -142,10 +143,10 @@ button:hover { transform: scale(1.02); }
 
 <!-- STEP 4 -->
 <div class="step" id="step4">
-<label>ชื่อสินค้า (เช่น ข้าวแกง / iPhone)</label>
+<label>ชื่อสินค้า</label>
 <input type="text" id="itemName" value="ข้าวแกง">
 
-<label>ราคาสินค้า 1 หน่วย (บาท)</label>
+<label>ราคาสินค้า 1 หน่วย</label>
 <input type="number" id="itemPrice" value="40">
 
 <button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
@@ -161,10 +162,12 @@ button:hover { transform: scale(1.02); }
 
 </div>
 
+<!-- RESULT -->
 <div class="card" id="resultCard">
   <div id="result"></div>
 </div>
 
+<!-- CHART -->
 <div class="card" id="chartCard">
   <canvas id="chart"></canvas>
 </div>
@@ -172,8 +175,11 @@ button:hover { transform: scale(1.02); }
 </div>
 
 <script>
+
 let chart;
 let currentStep = 1;
+
+hideResultUI(); // ซ่อนตอนเริ่ม
 
 function showStep(step) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
@@ -188,6 +194,20 @@ function nextStep() {
 function prevStep() {
   if (currentStep > 1) currentStep--;
   showStep(currentStep);
+
+  if (currentStep < 5) {
+    hideResultUI();
+  }
+}
+
+function showResultUI() {
+  document.getElementById("resultCard").style.display = "block";
+  document.getElementById("chartCard").style.display = "block";
+}
+
+function hideResultUI() {
+  document.getElementById("resultCard").style.display = "none";
+  document.getElementById("chartCard").style.display = "none";
 }
 
 function calculate() {
@@ -236,16 +256,10 @@ function calculate() {
   document.getElementById('result').innerHTML = `
 📌 <b>${assetName}</b><br><br>
 
-💰 ถ้าเก็บเงินสด<br>
-→ ซื้อ ${itemName}: <b>${cashPower.toLocaleString()}</b> หน่วย<br><br>
+💰 เงินสดซื้อ ${itemName}: <b>${cashPower.toLocaleString()}</b><br>
+📈 ลงทุนซื้อ ${itemName}: <b>${investPower.toLocaleString()}</b><br><br>
 
-📈 ถ้าลงทุน (${assetName})<br>
-→ ซื้อ ${itemName}: <b>${investPower.toLocaleString()}</b> หน่วย<br><br>
-
-⚠️ ความต่างกำลังซื้อ:<br>
-→ ลงทุนได้มากกว่า <b>${ratio} เท่า</b><br><br>
-
-📉 เงินเฟ้อทำให้เงินสด “ซื้อของได้น้อยลง”
+⚠️ ต่างกัน: <b>${ratio} เท่า</b>
 `;
 
   if (chart) chart.destroy();
@@ -261,7 +275,7 @@ function calculate() {
           borderWidth: 2
         },
         {
-          label: "เงินสด (โดนเงินเฟ้อ)",
+          label: "เงินสด (เงินเฟ้อ)",
           data: cashData,
           borderDash: [5,5],
           borderWidth: 2
@@ -280,20 +294,11 @@ function calculate() {
     }
   });
 
+  showResultUI();   // ✅ เปิดกราฟ
   currentStep = 5;
   showStep(5);
 }
 
-  function showResultUI() {
-  document.getElementById("resultCard").style.display = "block";
-  document.getElementById("chartCard").style.display = "block";
-}
-
-function hideResultUI() {
-  document.getElementById("resultCard").style.display = "none";
-  document.getElementById("chartCard").style.display = "none";
-}
-  
 </script>
 
 </body>
