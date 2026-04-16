@@ -2,47 +2,104 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DCA Calculator</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial;
+      margin: 0;
+      font-family: Arial, sans-serif;
       background: #111;
       color: #fff;
-      text-align: center;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: auto;
       padding: 20px;
     }
-    input, button {
-      padding: 10px;
-      margin: 5px;
-      border-radius: 8px;
-      border: none;
+
+    h2 {
+      margin-bottom: 20px;
     }
+
+    .card {
+      background: #1c1c1c;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+    }
+
     button {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: none;
       background: #00c853;
       color: #fff;
+      font-size: 18px;
+      font-weight: bold;
       cursor: pointer;
     }
+
+    button:active {
+      opacity: 0.8;
+    }
+
+    #result {
+      margin-top: 15px;
+      line-height: 1.6;
+    }
+
     canvas {
-      max-width: 100%;
       margin-top: 20px;
     }
   </style>
 </head>
+
 <body>
 
-<h2>📊 DCA Calculator</h2>
+<div class="container">
 
-<input type="number" id="monthly" placeholder="เงินต่อเดือน (บาท)" value="2000"><br>
-<input type="number" id="startAge" placeholder="อายุเริ่มต้น" value="28"><br>
-<input type="number" id="endAge" placeholder="อายุสิ้นสุด" value="60"><br>
-<input type="number" id="rate" placeholder="ผลตอบแทน % ต่อปี" value="10"><br>
+  <h2>📊 DCA Calculator</h2>
 
-<button onclick="calculate()">คำนวณ</button>
+  <div class="card">
+    <label>เงินต่อเดือน (บาท)</label>
+    <input type="number" id="monthly" value="2000">
 
-<h3 id="result"></h3>
+    <label>อายุเริ่มต้น</label>
+    <input type="number" id="startAge" value="28">
 
-<canvas id="chart"></canvas>
+    <label>อายุสิ้นสุด</label>
+    <input type="number" id="endAge" value="60">
+
+    <label>ผลตอบแทน % ต่อปี</label>
+    <input type="number" id="rate" value="10">
+
+    <button onclick="calculate()">คำนวณ</button>
+  </div>
+
+  <div class="card">
+    <h3 id="result"></h3>
+    <canvas id="chart"></canvas>
+  </div>
+
+</div>
 
 <script>
 let chart;
