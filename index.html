@@ -105,6 +105,34 @@ button {
   color: #00e676;
   letter-spacing: 0.5px;
 }
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.kpi-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.kpi-title {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.kpi-value {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.green { color: #00e676; }
+.red { color: #ff5252; }
   
 </style>
 </head>
@@ -368,12 +396,47 @@ function calculate(){
   const cashUnits = Math.round(cash / itemPrice);
   const ratio = (investUnits / cashUnits).toFixed(1);
 
-  const total = monthly * months;
+const total = monthly * months;
 const portfolio = port;
+
+const profit = portfolio - total;
+const profitPercent = ((profit / total) * 100).toFixed(2);
+
+const profitClass = profit >= 0 ? "green" : "red";
 
 document.getElementById("result").innerHTML = `
 📌 <span class="badge">ทรัพย์สินที่คุณเลือก DCA</span><br>
-<div class="asset-title">${assetName}</div><br><br>
+
+<div class="asset-title">${assetName}</div><br>
+
+<div class="kpi-grid">
+
+  <div class="kpi-card">
+    <div class="kpi-title">เงินลงทุนรวม</div>
+    <div class="kpi-value">${total.toLocaleString()} บาท</div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-title">พอร์ตสุดท้าย</div>
+    <div class="kpi-value">${Math.round(portfolio).toLocaleString()} บาท</div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-title">กำไร / ขาดทุน</div>
+    <div class="kpi-value ${profitClass}">
+      ${profit >= 0 ? "+" : ""}${Math.round(profit).toLocaleString()} บาท
+    </div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-title">ผลตอบแทน</div>
+    <div class="kpi-value ${profitClass}">
+      ${profitPercent}%
+    </div>
+  </div>
+
+</div>
+<br>
 
 💰 ถ้าเก็บเงินสด: ซื้อได้ <b>${cashUnits}</b> หน่วย (${itemName})<br>
 
