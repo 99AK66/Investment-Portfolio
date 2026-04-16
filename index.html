@@ -22,14 +22,17 @@
       padding: 20px;
     }
 
+    h2 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
     .card {
       background: #1c1c1c;
       padding: 15px;
       border-radius: 12px;
       margin-bottom: 15px;
     }
-
-    h2 { text-align: center; }
 
     label {
       margin-top: 10px;
@@ -53,19 +56,20 @@
       margin-top: 10px;
       border-radius: 10px;
       border: none;
-      background: #00c853;
-      color: #fff;
       font-size: 16px;
       cursor: pointer;
     }
 
-    button.secondary {
-      background: #2962ff;
-    }
+    .primary { background: #00c853; color: #fff; }
+    .secondary { background: #2962ff; color: #fff; }
 
     #result {
       margin-top: 10px;
       line-height: 1.6;
+    }
+
+    canvas {
+      margin-top: 20px;
     }
   </style>
 </head>
@@ -77,7 +81,7 @@
 
   <div class="card">
 
-    <label>ชื่อทรัพย์สิน (เช่น AAPL, TSLA, SPUS)</label>
+    <label>ชื่อทรัพย์สิน (เช่น AAPL, TSLA, SPUS, PTT.BK)</label>
     <input type="text" id="symbol" placeholder="เช่น SPUS">
 
     <button class="secondary" onclick="fetchReturn()">📡 ดึงผลตอบแทน 1 ปี</button>
@@ -94,7 +98,7 @@
     <label>อายุสิ้นสุด</label>
     <input type="number" id="endAge" value="60">
 
-    <button onclick="calculate()">คำนวณ</button>
+    <button class="primary" onclick="calculate()">คำนวณ</button>
 
   </div>
 
@@ -107,9 +111,9 @@
 <script>
 let chart;
 
-// 🔥 ดึงข้อมูลหุ้น (ผ่าน proxy ฟรี)
+// 📡 ดึงผลตอบแทน 1 ปี
 async function fetchReturn() {
-  const symbol = document.getElementById("symbol").value;
+  const symbol = document.getElementById("symbol").value.trim();
 
   if (!symbol) {
     alert("กรุณาใส่ชื่อหุ้น");
@@ -117,15 +121,20 @@ async function fetchReturn() {
   }
 
   try {
-    const url = `https://api.allorigins.win/raw?url=https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1y&interval=1mo`;
+    const url = `https://api.codetabs.com/v1/proxy?quest=https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1y&interval=1mo`;
 
     const res = await fetch(url);
     const data = await res.json();
 
+    if (!data.chart || !data.chart.result) {
+      alert("❌ ไม่พบข้อมูลหุ้นนี้");
+      return;
+    }
+
     const prices = data.chart.result[0].indicators.quote[0].close;
 
     const first = prices.find(p => p !== null);
-    const last = prices.reverse().find(p => p !== null);
+    const last = [...prices].reverse().find(p => p !== null);
 
     const returnPercent = ((last - first) / first) * 100;
 
@@ -134,15 +143,22 @@ async function fetchReturn() {
     alert(`📈 ผลตอบแทน 1 ปี ≈ ${returnPercent.toFixed(2)}%`);
 
   } catch (e) {
-    alert("❌ ดึงข้อมูลไม่ได้ (ลองเปลี่ยน symbol)");
+    console.error(e);
+    alert("❌ ดึงข้อมูลไม่ได้ (API อาจล่ม หรือ symbol ไม่ถูก)");
   }
 }
 
+// 📊 คำนวณ DCA
 function calculate() {
   const monthly = parseFloat(document.getElementById('monthly').value);
   const startAge = parseInt(document.getElementById('startAge').value);
   const endAge = parseInt(document.getElementById('endAge').value);
   const rate = parseFloat(document.getElementById('rate').value) / 100;
+
+  if (!monthly || !startAge || !endAge || !rate) {
+    alert("กรอกข้อมูลให้ครบ");
+    return;
+  }
 
   const months = (endAge - startAge) * 12;
   const monthlyRate = rate / 12;
