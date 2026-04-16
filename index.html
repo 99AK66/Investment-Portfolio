@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DCA Calculator</title>
+<title>DCA Reality Simulator</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -40,7 +40,7 @@ label {
   opacity: 0.8;
 }
 
-input, select {
+input {
   width: 100%;
   padding: 14px;
   margin-top: 6px;
@@ -60,14 +60,14 @@ button {
 }
 
 .primary { background:#00c853; color:#fff; }
+.secondary { background:#333; color:#fff; }
+
+.step { display: none; }
+.step.active { display: block; }
 
 #result {
   margin-top: 10px;
   line-height: 1.6;
-}
-
-canvas {
-  margin-top: 20px;
 }
 </style>
 </head>
@@ -76,26 +76,24 @@ canvas {
 
 <div class="container">
 
-<h2>📊 DCA Calculator</h2>
+<h2>📊 DCA Reality Simulator</h2>
 
 <div class="card">
 
-<label>ชื่อทรัพย์สิน</label>
-<input type="text" id="assetName" value="My Asset">
+<!-- STEP 1 -->
+<div class="step active" id="step1">
+<label>ชื่อทรัพย์สิน (เช่น SPUS)</label>
+<input type="text" id="assetName" value="SPUS">
+<button class="primary" onclick="nextStep()">ต่อไป</button>
+</div>
 
-<label>เลือกรูปแบบผลตอบแทน</label>
-<select id="preset" onchange="setRate()">
-  <option value="5">ทั่วไป (5%)</option>
-  <option value="10" selected>ปานกลาง (10%)</option>
-  <option value="15">สูง (15%)</option>
-  <option value="custom">กำหนดเอง</option>
-</select>
+<!-- STEP 2 -->
+<div class="step" id="step2">
+<label>เงินลงทุนต่อเดือน</label>
+<input type="number" id="monthly" value="2000">
 
 <label>ผลตอบแทน (% ต่อปี)</label>
 <input type="number" id="rate" value="10">
-
-<label>เงินต่อเดือน</label>
-<input type="number" id="monthly" value="2000">
 
 <label>อายุเริ่มต้น</label>
 <input type="number" id="startAge" value="28">
@@ -103,7 +101,37 @@ canvas {
 <label>อายุสิ้นสุด</label>
 <input type="number" id="endAge" value="60">
 
-<button class="primary" onclick="calculate()">คำนวณ</button>
+<button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
+<button class="primary" onclick="nextStep()">ต่อไป</button>
+</div>
+
+<!-- STEP 3 -->
+<div class="step" id="step3">
+<label>เงินเฟ้อ (% ต่อปี)</label>
+<input type="number" id="inflation" value="3">
+
+<button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
+<button class="primary" onclick="nextStep()">ต่อไป</button>
+</div>
+
+<!-- STEP 4 -->
+<div class="step" id="step4">
+<label>ชื่อสินค้า (เช่น ข้าวแกง / iPhone)</label>
+<input type="text" id="itemName" value="ข้าวแกง">
+
+<label>ราคาสินค้า 1 หน่วย (บาท)</label>
+<input type="number" id="itemPrice" value="40">
+
+<button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
+<button class="primary" onclick="nextStep()">ต่อไป</button>
+</div>
+
+<!-- STEP 5 -->
+<div class="step" id="step5">
+<h3>พร้อมคำนวณ</h3>
+<button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
+<button class="primary" onclick="calculate()">คำนวณผลลัพธ์</button>
+</div>
 
 </div>
 
@@ -116,176 +144,81 @@ canvas {
 
 <script>
 let chart;
+let currentStep = 1;
 
-// preset control
-function setRate() {
-  const preset = document.getElementById("preset").value;
-  const rate = document.getElementById("rate");
-
-  if (preset === "custom") {
-    rate.disabled = false;
-    rate.focus();
-  } else {
-    rate.value = preset;
-    rate.disabled = true;
-  }
+function showStep(step) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + step).classList.add('active');
 }
 
-async function calculate() {
+function nextStep() {
+  if (currentStep < 5) currentStep++;
+  showStep(currentStep);
+}
 
-  // =========================
-  // STEP 1: เลือกทรัพย์สิน
-  // =========================
-  const { value: assetName } = await Swal.fire({
-    title: "Step 1/5",
-    text: "เลือกทรัพย์สิน",
-    input: "text",
-    inputValue: "SPUS",
-    showCancelButton: true,
-    confirmButtonText: "ต่อไป"
-  });
+function prevStep() {
+  if (currentStep > 1) currentStep--;
+  showStep(currentStep);
+}
 
-  if (!assetName) return;
+function calculate() {
 
-  // =========================
-  // STEP 2: เงินลงทุน
-  // =========================
-  const { value: monthly } = await Swal.fire({
-    title: "Step 2/5",
-    text: "เงินลงทุนต่อเดือน (บาท)",
-    input: "number",
-    inputValue: 2000,
-    showCancelButton: true,
-    confirmButtonText: "ต่อไป"
-  });
+  const assetName = document.getElementById('assetName').value;
+  const monthly = parseFloat(document.getElementById('monthly').value);
+  const rate = parseFloat(document.getElementById('rate').value) / 100;
+  const startAge = parseInt(document.getElementById('startAge').value);
+  const endAge = parseInt(document.getElementById('endAge').value);
 
-  if (!monthly) return;
+  const inflation = parseFloat(document.getElementById('inflation').value) / 100;
 
-  const { value: rate } = await Swal.fire({
-    title: "Step 2/5",
-    text: "ผลตอบแทนเฉลี่ยต่อปี (%)",
-    input: "number",
-    inputValue: 10,
-    showCancelButton: true,
-    confirmButtonText: "ต่อไป"
-  });
-
-  if (!rate) return;
-
-  const { value: startAge } = await Swal.fire({
-    title: "Step 2/5",
-    text: "อายุเริ่มต้น",
-    input: "number",
-    inputValue: 28,
-    showCancelButton: true,
-    confirmButtonText: "ต่อไป"
-  });
-
-  const { value: endAge } = await Swal.fire({
-    title: "Step 2/5",
-    text: "อายุสิ้นสุด",
-    input: "number",
-    inputValue: 60,
-    showCancelButton: true,
-    confirmButtonText: "ต่อไป"
-  });
-
-  if (!startAge || !endAge) return;
-
-  // =========================
-  // STEP 3: เงินเฟ้อ
-  // =========================
-  const { value: inflationInput } = await Swal.fire({
-    title: "Step 3/5",
-    text: "เงินเฟ้อเฉลี่ยต่อปี (%)",
-    input: "number",
-    inputValue: 3,
-    showCancelButton: true,
-    confirmButtonText: "ต่อไป"
-  });
-
-  if (!inflationInput) return;
-
-  const inflation = parseFloat(inflationInput) / 100;
-
-  // =========================
-  // STEP 4: สินค้า
-  // =========================
-  const { value: itemName } = await Swal.fire({
-    title: "Step 4/5",
-    text: "ชื่อสินค้า (เช่น ข้าวแกง, iPhone)",
-    input: "text",
-    inputValue: "ข้าวแกง",
-    showCancelButton: true,
-    confirmButtonText: "ต่อไป"
-  });
-
-  const { value: itemPrice } = await Swal.fire({
-    title: "Step 4/5",
-    text: "ราคาสินค้า 1 หน่วย (บาท)",
-    input: "number",
-    inputValue: 40,
-    showCancelButton: true,
-    confirmButtonText: "สรุป"
-  });
-
-  if (!itemName || !itemPrice) return;
-
-  // =========================
-  // STEP 5: คำนวณ + สรุป
-  // =========================
+  const itemName = document.getElementById('itemName').value;
+  const itemPrice = parseFloat(document.getElementById('itemPrice').value);
 
   const months = (endAge - startAge) * 12;
-  const monthlyRate = (rate / 100) / 12;
+  const monthlyRate = rate / 12;
   const inflationRate = inflation / 12;
 
   let portfolio = 0;
   let cash = 0;
 
   let labels = [];
-  let spusData = [];
+  let investData = [];
   let cashData = [];
-  let buyingPowerData = [];
 
-  let age = parseInt(startAge);
+  let age = startAge;
 
   for (let m = 1; m <= months; m++) {
 
-    // 📈 ลงทุน
-    portfolio = portfolio * (1 + monthlyRate) + parseFloat(monthly);
-
-    // 💰 เงินสดโดนเงินเฟ้อ
-    cash = (cash + parseFloat(monthly)) / (1 + inflationRate);
+    portfolio = portfolio * (1 + monthlyRate) + monthly;
+    cash = (cash + monthly) / (1 + inflationRate);
 
     if (m % 12 === 0) {
       labels.push(age);
-
-      spusData.push(Math.round(portfolio));
+      investData.push(Math.round(portfolio));
       cashData.push(Math.round(cash));
-      buyingPowerData.push(Math.round(cash / itemPrice));
-
       age++;
     }
   }
 
-  // =========================
-  // RESULT (สรุป)
-  // =========================
-  Swal.fire({
-    icon: "success",
-    title: "สรุปผลการจำลอง",
-    html: `
-      📌 <b>${assetName}</b><br><br>
-      📈 พอร์ตลงทุน: ${Math.round(portfolio).toLocaleString()} บาท<br>
-      💰 เงินสดจริง: ${Math.round(cash).toLocaleString()} บาท<br>
-      🛒 ซื้อ ${itemName}: ${Math.round(cash / itemPrice)} หน่วย<br><br>
-      📊 ดูกราฟด้านล่างได้เลย
-    `
-  });
+  const investPower = Math.round(portfolio / itemPrice);
+  const cashPower = Math.round(cash / itemPrice);
+  const ratio = (investPower / cashPower).toFixed(1);
 
-  // =========================
-  // CHART
-  // =========================
+  document.getElementById('result').innerHTML = `
+📌 <b>${assetName}</b><br><br>
+
+💰 ถ้าเก็บเงินสด<br>
+→ ซื้อ ${itemName}: <b>${cashPower.toLocaleString()}</b> หน่วย<br><br>
+
+📈 ถ้าลงทุน (${assetName})<br>
+→ ซื้อ ${itemName}: <b>${investPower.toLocaleString()}</b> หน่วย<br><br>
+
+⚠️ ความต่างกำลังซื้อ:<br>
+→ ลงทุนได้มากกว่า <b>${ratio} เท่า</b><br><br>
+
+📉 เงินเฟ้อทำให้เงินสด “ซื้อของได้น้อยลง”
+`;
+
   if (chart) chart.destroy();
 
   chart = new Chart(document.getElementById("chart"), {
@@ -294,19 +227,14 @@ async function calculate() {
       labels,
       datasets: [
         {
-          label: `${assetName} (ลงทุน)`,
-          data: spusData,
+          label: assetName,
+          data: investData,
           borderWidth: 2
         },
         {
-          label: "เงินสดจริง (โดนเงินเฟ้อ)",
+          label: "เงินสด (โดนเงินเฟ้อ)",
           data: cashData,
-          borderDash: [6, 4],
-          borderWidth: 2
-        },
-        {
-          label: `กำลังซื้อ (${itemName})`,
-          data: buyingPowerData,
+          borderDash: [5,5],
           borderWidth: 2
         }
       ]
@@ -322,11 +250,11 @@ async function calculate() {
       }
     }
   });
-}
 
-// init
-setRate();
+  currentStep = 5;
+  showStep(5);
+}
 </script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </body>
 </html>
