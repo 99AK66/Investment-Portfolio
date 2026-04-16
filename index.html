@@ -88,6 +88,23 @@ button {
   justify-content: center;
   margin-top: 20px;
 }
+  .badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #00c853, #00e676);
+  color: #000;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.asset-title {
+  margin-top: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #00e676;
+  letter-spacing: 0.5px;
+}
   
 </style>
 </head>
@@ -355,7 +372,8 @@ function calculate(){
 const portfolio = port;
 
 document.getElementById("result").innerHTML = `
-📌 <b>${assetName}</b><br><br>
+📌 <span class="badge">ทรัพย์สิน DCA</span><br>
+<div class="asset-title">${assetName}</div><br><br>
 
 💰 ถ้าเก็บเงินสด: ซื้อได้ <b>${cashUnits}</b> หน่วย (${itemName})<br>
 
