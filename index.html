@@ -87,16 +87,16 @@
     <button class="secondary" onclick="fetchReturn()">📡 ดึงผลตอบแทน 1 ปี</button>
 
     <label>ผลตอบแทน (% ต่อปี)</label>
-    <input type="number" id="rate" value="0">
+    <input type="number" id="rate" value="10">
 
-    <label>เงินต่อเดือน (บาท)</label>
-    <input type="number" id="monthly" value="0">
+    <label>เงินต่อเดือน</label>
+    <input type="number" id="monthly" value="2000">
 
     <label>อายุเริ่มต้น</label>
-    <input type="number" id="startAge" value="0">
+    <input type="number" id="startAge" value="28">
 
     <label>อายุสิ้นสุด</label>
-    <input type="number" id="endAge" value="0">
+    <input type="number" id="endAge" value="60">
 
     <button class="primary" onclick="calculate()">คำนวณ</button>
 
@@ -111,58 +111,35 @@
 <script>
 let chart;
 
-// 📡 ดึงผลตอบแทน 1 ปี
+// 🔥 ใส่ backend URL ตรงนี้
+const BACKEND_URL = "https://YOUR-BACKEND-URL.vercel.app";
+
 async function fetchReturn() {
   const symbol = document.getElementById("symbol").value.trim();
 
   if (!symbol) {
-    alert("กรุณาใส่ชื่อหุ้น เช่น AAPL, TSLA, PTT.BK");
+    alert("กรุณาใส่ชื่อหุ้น");
     return;
   }
 
   try {
-    const url = `https://api.codetabs.com/v1/proxy?quest=https://query1.finance.yahoo.com/v7/finance/chart/${symbol}?range=1y&interval=1d`;
-
-    const res = await fetch(url);
+    const res = await fetch(`${BACKEND_URL}/api/return/${symbol}`);
     const data = await res.json();
 
-    if (!data.chart || !data.chart.result) {
+    if (!data || data.error) {
       alert("❌ ไม่พบข้อมูลหุ้นนี้");
       return;
     }
 
-    const prices = data.chart.result[0].indicators.quote[0].close;
-
-    // เอาค่าแรก + ล่าสุด (ข้าม null)
-    const validPrices = prices.filter(p => p !== null);
-
-    if (validPrices.length < 2) {
-      alert("❌ ข้อมูลไม่เพียงพอ");
-      return;
-    }
-
-    const first = validPrices[0];
-    const last = validPrices[validPrices.length - 1];
-
-    const returnPercent = ((last - first) / first) * 100;
-
-    document.getElementById("rate").value = returnPercent.toFixed(2);
-
-    alert(`📈 ${symbol} ย้อนหลัง 1 ปี ≈ ${returnPercent.toFixed(2)}%`);
+    document.getElementById("rate").value = data.return;
+    alert(`📈 ${symbol} ≈ ${data.return}%`);
 
   } catch (err) {
     console.error(err);
-
-    alert(`❌ ดึงข้อมูลไม่ได้
-
-ลองวิธีนี้:
-- เช็ค symbol (เช่น PTT.BK)
-- ใช้หุ้น US เช่น AAPL
-- หรือกรอก % เอง`);
+    alert("❌ server ไม่ตอบสนอง");
   }
 }
 
-// 📊 คำนวณ DCA
 function calculate() {
   const monthly = parseFloat(document.getElementById('monthly').value);
   const startAge = parseInt(document.getElementById('startAge').value);
@@ -202,15 +179,13 @@ function calculate() {
 
   if (chart) chart.destroy();
 
-  const ctx = document.getElementById('chart').getContext('2d');
-
-  chart = new Chart(ctx, {
-    type: 'line',
+  chart = new Chart(document.getElementById("chart"), {
+    type: "line",
     data: {
-      labels: labels,
+      labels,
       datasets: [{
-        label: 'มูลค่าพอร์ต',
-        data: data,
+        label: "มูลค่าพอร์ต",
+        data,
         borderWidth: 2,
         tension: 0.3
       }]
@@ -218,11 +193,11 @@ function calculate() {
     options: {
       responsive: true,
       plugins: {
-        legend: { labels: { color: 'white' } }
+        legend: { labels: { color: "white" } }
       },
       scales: {
-        x: { ticks: { color: 'white' } },
-        y: { ticks: { color: 'white' } }
+        x: { ticks: { color: "white" } },
+        y: { ticks: { color: "white" } }
       }
     }
   });
