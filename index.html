@@ -1,207 +1,229 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DCA Calculator</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DCA Pro</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <style>
-    * { box-sizing: border-box; }
+<style>
+body {
+  margin:0;
+  font-family:Arial;
+  background:#111;
+  color:#fff;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: #111;
-      color: #fff;
-    }
+.container {
+  max-width:500px;
+  margin:auto;
+  padding:20px;
+}
 
-    .container {
-      max-width: 480px;
-      margin: auto;
-      padding: 20px;
-    }
+.card {
+  background:#1c1c1c;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:15px;
+}
 
-    h2 {
-      text-align: center;
-      margin-bottom: 15px;
-    }
+input, select, button {
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border-radius:10px;
+  border:none;
+}
 
-    .card {
-      background: #1c1c1c;
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 15px;
-    }
+button { cursor:pointer; }
 
-    label {
-      margin-top: 10px;
-      display: block;
-      font-size: 14px;
-      opacity: 0.8;
-    }
+.primary { background:#00c853; color:#fff; }
+.secondary { background:#2962ff; color:#fff; }
 
-    input {
-      width: 100%;
-      padding: 14px;
-      margin-top: 6px;
-      border-radius: 10px;
-      border: none;
-      font-size: 16px;
-    }
+#result { margin-top:10px; }
 
-    button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 10px;
-      border-radius: 10px;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .primary { background: #00c853; color: #fff; }
-    .secondary { background: #2962ff; color: #fff; }
-
-    #result {
-      margin-top: 10px;
-      line-height: 1.6;
-    }
-
-    canvas {
-      margin-top: 20px;
-    }
-  </style>
+canvas { margin-top:15px; }
+</style>
 </head>
 
 <body>
 
 <div class="container">
-  <h2>📊 DCA Calculator</h2>
 
-  <div class="card">
+<h2>📊 DCA Pro</h2>
 
-    <label>ชื่อทรัพย์สิน (เช่น AAPL, TSLA, SPUS, PTT.BK)</label>
-    <input type="text" id="symbol" placeholder="เช่น SPUS">
+<div class="card">
 
-    <button class="secondary" onclick="fetchReturn()">📡 ดึงผลตอบแทน 1 ปี</button>
+<input id="email" placeholder="ใส่ Email เพื่อเข้าใช้งาน">
 
-    <label>ผลตอบแทน (% ต่อปี)</label>
-    <input type="number" id="rate" value="10">
+<button class="primary" onclick="login()">Login</button>
 
-    <label>เงินต่อเดือน</label>
-    <input type="number" id="monthly" value="2000">
+<hr>
 
-    <label>อายุเริ่มต้น</label>
-    <input type="number" id="startAge" value="28">
+<select id="preset" onchange="setRate()">
+  <option value="5">ทั่วไป 5%</option>
+  <option value="10" selected>ปานกลาง 10%</option>
+  <option value="15">สูง 15%</option>
+  <option value="custom">กำหนดเอง</option>
+</select>
 
-    <label>อายุสิ้นสุด</label>
-    <input type="number" id="endAge" value="60">
+<input id="rate" type="number" value="10">
 
-    <button class="primary" onclick="calculate()">คำนวณ</button>
+<input id="monthly" type="number" value="2000" placeholder="เงินต่อเดือน">
+<input id="startAge" type="number" value="28" placeholder="เริ่ม">
+<input id="endAge" type="number" value="60" placeholder="จบ">
 
-  </div>
+<button class="primary" onclick="calculate()">คำนวณ</button>
+<button class="secondary" onclick="monteCarlo()">Monte Carlo</button>
 
-  <div class="card">
-    <div id="result"></div>
-    <canvas id="chart"></canvas>
-  </div>
+</div>
+
+<div class="card">
+<div id="result"></div>
+<canvas id="chart"></canvas>
+</div>
+
 </div>
 
 <script>
 let chart;
+let sessionTimer;
+let idleTimer;
 
-// 🔥 ใส่ backend URL ตรงนี้
-const BACKEND_URL = "https://YOUR-BACKEND-URL.vercel.app";
+// ---------------- LOGIN (LOCAL DEMO)
+function login(){
+  const email = document.getElementById("email").value;
 
-async function fetchReturn() {
-  const symbol = document.getElementById("symbol").value.trim();
-
-  if (!symbol) {
-    alert("กรุณาใส่ชื่อหุ้น");
+  if(!email){
+    alert("ใส่ email");
     return;
   }
 
-  try {
-    const res = await fetch(`${BACKEND_URL}/api/return/${symbol}`);
-    const data = await res.json();
+  localStorage.setItem("session", email);
+  startSession();
+  alert("Login สำเร็จ (demo)");
+}
 
-    if (!data || data.error) {
-      alert("❌ ไม่พบข้อมูลหุ้นนี้");
-      return;
-    }
+// ---------------- SESSION CONTROL
+function startSession(){
+  clearTimeout(sessionTimer);
+  resetIdle();
 
-    document.getElementById("rate").value = data.return;
-    alert(`📈 ${symbol} ≈ ${data.return}%`);
+  sessionTimer = setTimeout(()=>{
+    logout("หมดเวลา 30 นาที");
+  }, 30*60*1000);
 
-  } catch (err) {
-    console.error(err);
-    alert("❌ server ไม่ตอบสนอง");
+  document.onmousemove = resetIdle;
+  document.onkeypress = resetIdle;
+}
+
+function resetIdle(){
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(()=>{
+    logout("ไม่มีการใช้งาน");
+  }, 2*60*1000);
+}
+
+function logout(msg){
+  localStorage.removeItem("session");
+  alert(msg);
+  location.reload();
+}
+
+// ---------------- SETTINGS
+function setRate(){
+  const p = document.getElementById("preset").value;
+  const r = document.getElementById("rate");
+
+  if(p==="custom"){
+    r.disabled=false;
+  } else {
+    r.value=p;
+    r.disabled=true;
   }
 }
 
-function calculate() {
-  const monthly = parseFloat(document.getElementById('monthly').value);
-  const startAge = parseInt(document.getElementById('startAge').value);
-  const endAge = parseInt(document.getElementById('endAge').value);
-  const rate = parseFloat(document.getElementById('rate').value) / 100;
+// ---------------- CALC
+function calculate(){
+  const monthly=+document.getElementById("monthly").value;
+  const start=+document.getElementById("startAge").value;
+  const end=+document.getElementById("endAge").value;
+  const rate=+document.getElementById("rate").value/100;
 
-  if (!monthly || !startAge || !endAge || !rate) {
-    alert("กรอกข้อมูลให้ครบ");
-    return;
-  }
+  const months=(end-start)*12;
+  const mRate=rate/12;
 
-  const months = (endAge - startAge) * 12;
-  const monthlyRate = rate / 12;
+  let portfolio=0;
+  let principal=0;
 
-  let portfolio = 0;
-  let total = 0;
+  let labels=[], total=[], profit=[];
 
-  let labels = [];
-  let data = [];
+  let age=start;
 
-  let age = startAge;
+  for(let i=1;i<=months;i++){
+    portfolio=portfolio*(1+mRate)+monthly;
+    principal+=monthly;
 
-  for (let m = 1; m <= months; m++) {
-    portfolio = portfolio * (1 + monthlyRate) + monthly;
-    total += monthly;
-
-    if (m % 12 === 0) {
+    if(i%12===0){
       labels.push(age);
-      data.push(Math.round(portfolio));
+      total.push(Math.round(portfolio));
+      profit.push(Math.round(portfolio-principal));
       age++;
     }
   }
 
-  document.getElementById('result').innerHTML =
-    "💰 เงินลงทุนรวม: " + total.toLocaleString() + " บาท<br>" +
-    "🚀 พอร์ตสุดท้าย: " + Math.round(portfolio).toLocaleString() + " บาท";
+  document.getElementById("result").innerHTML=
+  `💰 เงินต้น: ${principal.toLocaleString()}<br>
+   📈 พอร์ต: ${Math.round(portfolio).toLocaleString()}`;
 
-  if (chart) chart.destroy();
+  if(chart) chart.destroy();
 
-  chart = new Chart(document.getElementById("chart"), {
-    type: "line",
-    data: {
+  chart=new Chart(document.getElementById("chart"),{
+    type:"line",
+    data:{
       labels,
-      datasets: [{
-        label: "มูลค่าพอร์ต",
-        data,
-        borderWidth: 2,
-        tension: 0.3
-      }]
+      datasets:[
+        {
+          label:"พอร์ตทั้งหมด",
+          data:total,
+          borderColor:"#00c853",
+          tension:0.4
+        },
+        {
+          label:"กำไร",
+          data:profit,
+          borderColor:"#ff9800",
+          tension:0.4
+        }
+      ]
     },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { labels: { color: "white" } }
-      },
-      scales: {
-        x: { ticks: { color: "white" } },
-        y: { ticks: { color: "white" } }
+    options:{
+      responsive:true,
+      animation:{duration:1200},
+      plugins:{legend:{labels:{color:"#fff"}}},
+      scales:{
+        x:{ticks:{color:"#fff"}},
+        y:{ticks:{color:"#fff"}}
       }
     }
   });
 }
+
+// Monte Carlo (ง่าย ๆ)
+function monteCarlo(){
+  const base=+document.getElementById("rate").value/100;
+  let sims=[];
+
+  for(let i=0;i<20;i++){
+    let r=base+(Math.random()-0.5)*0.1;
+    sims.push((r*100).toFixed(1));
+  }
+
+  alert("Monte Carlo ผลลัพธ์:\n"+sims.join("% , ")+"%");
+}
+
+// init
+setRate();
 </script>
 
 </body>
