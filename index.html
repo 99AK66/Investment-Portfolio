@@ -351,7 +351,10 @@ function calculate(){
   const cashUnits = Math.round(cash / itemPrice);
   const ratio = (investUnits / cashUnits).toFixed(1);
 
-  document.getElementById("result").innerHTML = `
+  const total = monthly * months;
+const portfolio = port;
+
+document.getElementById("result").innerHTML = `
 📌 <b>${assetName}</b><br><br>
 
 💰 ถ้าเก็บเงินสด: ซื้อได้ <b>${cashUnits}</b> หน่วย (${itemName})<br>
@@ -360,6 +363,9 @@ function calculate(){
 
 💥 คุณพลาดโอกาสไป <b>${investUnits - cashUnits}</b> หน่วย<br>
 ≈ <b>${((investUnits - cashUnits) * itemPrice).toLocaleString()}</b> บาท<br><br>
+
+💰 เงินลงทุนรวม: ${total.toLocaleString()} บาท<br>
+🚀 พอร์ตสุดท้าย: ${Math.round(portfolio).toLocaleString()} บาท<br><br>
 
 ⚠️ เมื่อเปรียบเทียบการลงทุนใน <b>${assetName}</b> กับการถือเงินสด พบว่าเงินเติบโตต่างกัน <b>${ratio} เท่า</b><br>
 
