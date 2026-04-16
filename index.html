@@ -11,8 +11,8 @@
 
 body {
   margin: 0;
-  font-family: Arial;
-  background: #111;
+  font-family: system-ui, Arial;
+  background: radial-gradient(circle at top, #1a1a1a, #0d0d0d);
   color: #fff;
 }
 
@@ -24,19 +24,27 @@ body {
 
 h2 {
   text-align: center;
+  margin-bottom: 20px;
 }
 
 .card {
-  background: #1c1c1c;
-  padding: 15px;
-  border-radius: 12px;
+  background: rgba(28,28,28,0.85);
+  backdrop-filter: blur(10px);
+  padding: 16px;
+  border-radius: 16px;
   margin-bottom: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  transition: 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
 }
 
 label {
   display: block;
   margin-top: 10px;
-  font-size: 14px;
+  font-size: 13px;
   opacity: 0.8;
 }
 
@@ -44,30 +52,48 @@ input {
   width: 100%;
   padding: 14px;
   margin-top: 6px;
-  border-radius: 10px;
+  border-radius: 12px;
   border: none;
-  font-size: 16px;
+  font-size: 15px;
+  background: #2a2a2a;
+  color: #fff;
 }
 
 button {
   width: 100%;
   padding: 14px;
   margin-top: 10px;
-  border-radius: 10px;
+  border-radius: 12px;
   border: none;
   font-size: 16px;
   cursor: pointer;
+  transition: 0.2s;
 }
 
-.primary { background:#00c853; color:#fff; }
-.secondary { background:#333; color:#fff; }
+button:hover { transform: scale(1.02); }
+
+.primary {
+  background: linear-gradient(135deg,#00c853,#00e676);
+  color: #000;
+  font-weight: bold;
+}
+
+.secondary {
+  background: #2c2c2c;
+  color: #fff;
+}
 
 .step { display: none; }
 .step.active { display: block; }
 
-#result {
-  margin-top: 10px;
-  line-height: 1.6;
+#resultCard, #chartCard {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
 </head>
@@ -135,9 +161,12 @@ button {
 
 </div>
 
-<div class="card">
-<div id="result"></div>
-<canvas id="chart"></canvas>
+<div class="card" id="resultCard">
+  <div id="result"></div>
+</div>
+
+<div class="card" id="chartCard">
+  <canvas id="chart"></canvas>
 </div>
 
 </div>
@@ -254,6 +283,17 @@ function calculate() {
   currentStep = 5;
   showStep(5);
 }
+
+  function showResultUI() {
+  document.getElementById("resultCard").style.display = "block";
+  document.getElementById("chartCard").style.display = "block";
+}
+
+function hideResultUI() {
+  document.getElementById("resultCard").style.display = "none";
+  document.getElementById("chartCard").style.display = "none";
+}
+  
 </script>
 
 </body>
