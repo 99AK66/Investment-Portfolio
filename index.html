@@ -407,50 +407,48 @@ const profitClass = profit >= 0 ? "green" : "red";
 document.getElementById("result").innerHTML = `
 📌 <span class="badge">ทรัพย์สินที่คุณเลือก DCA</span><br>
 
-<div class="asset-title">${assetName}</div><br>
+<div class="asset-title">📊 ${assetName}</div><br>
 
 <div class="kpi-grid">
 
   <div class="kpi-card">
-    <div class="kpi-title">เงินลงทุนรวม</div>
+    <div class="kpi-title">💰 เงินลงทุนรวม</div>
     <div class="kpi-value">${total.toLocaleString()} บาท</div>
   </div>
 
   <div class="kpi-card">
-    <div class="kpi-title">พอร์ตสุดท้าย</div>
+    <div class="kpi-title">🚀 พอร์ตสุดท้าย</div>
     <div class="kpi-value">${Math.round(portfolio).toLocaleString()} บาท</div>
   </div>
 
   <div class="kpi-card">
-    <div class="kpi-title">กำไร / ขาดทุน</div>
+    <div class="kpi-title">📈 กำไร / ขาดทุน</div>
     <div class="kpi-value ${profitClass}">
-      ${profit >= 0 ? "+" : ""}${Math.round(profit).toLocaleString()} บาท
+      ${profit >= 0 ? "📈 +" : "📉"}${Math.round(profit).toLocaleString()} บาท
     </div>
   </div>
 
   <div class="kpi-card">
-    <div class="kpi-title">ผลตอบแทน</div>
+    <div class="kpi-title">⚡ ผลตอบแทน</div>
     <div class="kpi-value ${profitClass}">
-      ${profitPercent}%
+      ${profit >= 0 ? "🟢" : "🔴"} ${profitPercent}%
     </div>
   </div>
 
 </div>
+
 <br>
 
-💰 ถ้าเก็บเงินสด: ซื้อได้ <b>${cashUnits}</b> หน่วย (${itemName})<br>
+💰 <b>ถือเงินสด:</b> ซื้อได้ <b>${cashUnits}</b> หน่วย (${itemName})<br>
 
-📈 หากนำเงินไปลงทุนใน <b>${assetName}</b> แทนการถือเงินสด: ซื้อได้ <b>${investUnits}</b> หน่วย (${itemName})<br>
+📈 <b>DCA ใน ${assetName}:</b> ซื้อได้ <b>${investUnits}</b> หน่วย (${itemName})<br>
 
-💥 คุณพลาดโอกาสไป <b>${investUnits - cashUnits}</b> หน่วย<br>
+💥 <b>พลาดโอกาส:</b> ${investUnits - cashUnits} หน่วย  
 ≈ <b>${((investUnits - cashUnits) * itemPrice).toLocaleString()}</b> บาท<br><br>
 
-💰 เงินลงทุนรวม: ${total.toLocaleString()} บาท<br>
-🚀 พอร์ตสุดท้าย: ${Math.round(portfolio).toLocaleString()} บาท<br><br>
+⚠️ เมื่อเทียบ DCA vs เงินสด พบว่าเติบโตต่างกัน <b>${ratio} เท่า</b><br>
 
-⚠️ เมื่อเปรียบเทียบการลงทุนใน <b>${assetName}</b> กับการถือเงินสด พบว่าเงินเติบโตต่างกัน <b>${ratio} เท่า</b><br>
-
-⏳ ระยะเวลา ${endAge - startAge} ปี ทำให้ความต่างนี้ขยายแบบทวีคูณ
+⏳ ระยะเวลา ${endAge - startAge} ปี ทำให้ผลต่างขยายแบบทวีคูณ
 `;
 
   if(chart) chart.destroy();
