@@ -299,9 +299,16 @@ function calculate(){
   document.getElementById("result").innerHTML = `
 📌 <b>${assetName}</b><br><br>
 
-💰 ถ้าเก็บเงินสดซื้อ ${itemName}: <b>${cashUnits}</b> หน่วย<br>
-📈 ถ้าลงทุนใน ${assetName} ซื้อ ${itemName}: <b>${investUnits}</b> หน่วย<br>
-⚠️ ต่างกัน: <b>${ratio} เท่า</b>
+💰 ถ้าเก็บเงินสด: ซื้อได้ <b>${cashUnits}</b> หน่วย (${itemName})<br>
+
+📈 ถ้าลงทุน: ซื้อได้ <b>${investUnits}</b> หน่วย (${itemName})<br>
+
+💥 คุณพลาดโอกาสไป <b>${investUnits - cashUnits}</b> หน่วย<br>
+≈ <b>${((investUnits - cashUnits) * itemPrice).toLocaleString()}</b> บาท<br><br>
+
+⚠️ เงินของคุณเติบโตต่างกัน <b>${ratio} เท่า</b> เมื่อปล่อยให้ “ทำงานแทนคุณ”<br>
+
+⏳ ระยะเวลา ${endAge - startAge} ปี ทำให้ความต่างนี้ขยายแบบทวีคูณ
 `;
 
   if(chart) chart.destroy();
