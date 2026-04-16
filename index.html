@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DCA Mobile</title>
+<title>DCA Pro</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -12,143 +12,177 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   background: #0d0d0d;
   color: #fff;
+  overflow: hidden;
 }
 
-/* container หลัก */
-.main {
-  padding-bottom: 100px; /* 🔥 สำคัญ: กันปุ่มทับ */
+/* SLIDE CONTAINER */
+.wrapper {
+  display: flex;
+  width: 200%;
+  transition: transform 0.4s ease;
 }
 
-.header {
+.page {
+  width: 100%;
   padding: 16px;
-  font-size: 20px;
-  font-weight: bold;
+  box-sizing: border-box;
 }
 
+/* CARD */
 .card {
   background: #1a1a1a;
-  margin: 12px;
   padding: 16px;
   border-radius: 16px;
-}
-
-.input-group {
   margin-bottom: 16px;
 }
 
-label {
-  font-size: 13px;
-  opacity: 0.7;
-}
-
+/* INPUT */
 input, select {
   width: 100%;
   padding: 14px;
-  margin-top: 6px;
   border-radius: 12px;
   border: none;
   background: #2a2a2a;
   color: #fff;
+  margin-top: 6px;
+  margin-bottom: 12px;
   font-size: 16px;
 }
 
-/* result */
-.result {
-  font-size: 16px;
-  line-height: 1.6;
-}
-
-/* chart */
-canvas {
-  margin-top: 10px;
-  max-height: 300px;
-}
-
-/* ปุ่มล่าง */
-.footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  padding: 10px;
-  background: rgba(13,13,13,0.9);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
-
+/* BUTTON */
 button {
   width: 100%;
   padding: 16px;
   border-radius: 14px;
   border: none;
-  font-size: 16px;
-  font-weight: bold;
   background: #00e676;
-  color: #000;
+  font-weight: bold;
 }
 
-/* ป้องกัน zoom ตอนกด input */
-input, select {
+/* RESULT */
+.result {
   font-size: 16px;
+  line-height: 1.6;
+}
+
+/* CHART */
+.chart-box {
+  height: 300px;
+}
+
+/* NAV DOT */
+.nav {
+  position: fixed;
+  bottom: 70px;
+  width: 100%;
+  text-align: center;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin: 4px;
+  background: #555;
+  border-radius: 50%;
+}
+
+.active {
+  background: #00e676;
+}
+
+/* FOOTER */
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 10px;
+  background: #0d0d0d;
 }
 </style>
 </head>
 
 <body>
 
-<div class="main">
+<div id="wrapper" class="wrapper">
 
-  <div class="header">📊 DCA Calculator</div>
+  <!-- PAGE 1 -->
+  <div class="page">
+    <h2>📊 ตั้งค่า</h2>
 
-  <div class="card">
-
-    <div class="input-group">
+    <div class="card">
       <label>เงินต่อเดือน</label>
       <input type="number" id="monthly" value="0">
-    </div>
 
-    <div class="input-group">
       <label>อายุเริ่มต้น</label>
       <input type="number" id="startAge" value="0">
-    </div>
 
-    <div class="input-group">
       <label>อายุสิ้นสุด</label>
       <input type="number" id="endAge" value="0">
-    </div>
 
-    <div class="input-group">
-      <label>เลือกผลตอบแทน</label>
+      <label>ผลตอบแทน</label>
       <select id="preset" onchange="setRate()">
         <option value="">-- เลือก --</option>
-        <option value="5">ทั่วไป 5%</option>
-        <option value="10">ปานกลาง 10%</option>
-        <option value="15">เติบโตสูง 15%</option>
+        <option value="5">5%</option>
+        <option value="10">10%</option>
+        <option value="15">15%</option>
       </select>
-    </div>
 
-    <div class="input-group">
-      <label>หรือกำหนดเอง (%)</label>
       <input type="number" id="rate" value="0">
     </div>
-
   </div>
 
-  <div class="card result" id="result">
-    กรอกข้อมูลแล้วกด “คำนวณ”
-  </div>
+  <!-- PAGE 2 -->
+  <div class="page">
+    <h2>📈 ผลลัพธ์</h2>
 
-  <div class="card">
-    <canvas id="chart"></canvas>
+    <div class="card result" id="result"></div>
+
+    <div class="card">
+      <div class="chart-box">
+        <canvas id="chart"></canvas>
+      </div>
+    </div>
   </div>
 
 </div>
 
+<!-- DOT -->
+<div class="nav">
+  <span class="dot active" id="dot1"></span>
+  <span class="dot" id="dot2"></span>
+</div>
+
+<!-- BUTTON -->
 <div class="footer">
   <button onclick="calculate()">คำนวณ</button>
 </div>
 
 <script>
 let chart;
+let currentPage = 0;
+
+// swipe
+let startX = 0;
+
+document.addEventListener("touchstart", e => {
+  startX = e.touches[0].clientX;
+});
+
+document.addEventListener("touchend", e => {
+  let endX = e.changedTouches[0].clientX;
+  if (startX - endX > 50) goPage(1);
+  if (endX - startX > 50) goPage(0);
+});
+
+function goPage(page) {
+  currentPage = page;
+  document.getElementById("wrapper").style.transform =
+    `translateX(-${page * 50}%)`;
+
+  document.getElementById("dot1").classList.toggle("active", page === 0);
+  document.getElementById("dot2").classList.toggle("active", page === 1);
+}
 
 function setRate() {
   const preset = document.getElementById("preset").value;
@@ -156,25 +190,16 @@ function setRate() {
 }
 
 function calculate() {
-  const monthly = parseFloat(document.getElementById('monthly').value);
-  const startAge = parseInt(document.getElementById('startAge').value);
-  const endAge = parseInt(document.getElementById('endAge').value);
-  const rate = parseFloat(document.getElementById('rate').value) / 100;
-
-  if (endAge <= startAge) {
-    alert("อายุไม่ถูกต้อง");
-    return;
-  }
+  const monthly = +document.getElementById('monthly').value;
+  const startAge = +document.getElementById('startAge').value;
+  const endAge = +document.getElementById('endAge').value;
+  const rate = +document.getElementById('rate').value / 100;
 
   const months = (endAge - startAge) * 12;
   const monthlyRate = rate / 12;
 
-  let portfolio = 0;
-  let total = 0;
-
-  let labels = [];
-  let data = [];
-
+  let portfolio = 0, total = 0;
+  let labels = [], data = [];
   let age = startAge;
 
   for (let m = 1; m <= months; m++) {
@@ -188,10 +213,21 @@ function calculate() {
     }
   }
 
-  document.getElementById('result').innerHTML =
+  document.getElementById("result").innerHTML =
     `💰 ลงทุนรวม: ${total.toLocaleString()} บาท<br>
      🚀 พอร์ต: ${Math.round(portfolio).toLocaleString()} บาท`;
 
+  // ไปหน้าผลลัพธ์
+  goPage(1);
+
+  // delay เล็กน้อยให้หน้า slide ก่อนแล้ว animate กราฟ
+  setTimeout(() => {
+    drawChart(labels, data);
+    document.getElementById("chart").scrollIntoView({ behavior: "smooth" });
+  }, 300);
+}
+
+function drawChart(labels, data) {
   if (chart) chart.destroy();
 
   chart = new Chart(document.getElementById('chart'), {
@@ -199,17 +235,18 @@ function calculate() {
     data: {
       labels: labels,
       datasets: [{
-        label: 'พอร์ต',
         data: data,
         borderWidth: 3,
         tension: 0.4
       }]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
+      animation: {
+        duration: 1200,
+        easing: 'easeOutQuart'
+      },
       plugins: {
-        legend: { labels: { color: "#fff" } }
+        legend: { display: false }
       },
       scales: {
         x: { ticks: { color: "#fff" } },
