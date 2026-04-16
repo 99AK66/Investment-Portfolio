@@ -139,10 +139,14 @@ function calculate() {
   const endAge = parseInt(document.getElementById('endAge').value);
   const rate = parseFloat(document.getElementById('rate').value) / 100;
 
-  const inflation = 0.03; // 🔥 เงินเฟ้อ 3% ต่อปี
+  const inflationInput = parseFloat(prompt("เงินเฟ้อ (% ต่อปี)", "3"));
+  const inflation = inflationInput / 100;
 
-  if (!monthly || !startAge || !endAge || !rate) {
-    alert("กรอกข้อมูลให้ครบ");
+  const itemPrice = parseFloat(prompt("ราคาสินค้า 1 หน่วย (บาท)", "40"));
+  const itemName = prompt("ชื่อสินค้า (เช่น ข้าวแกง)", "ข้าวแกง");
+
+  if (!monthly || !startAge || !endAge || !rate || !itemPrice) {
+    alert("กรอกข้อมูลไม่ครบ");
     return;
   }
 
@@ -151,26 +155,23 @@ function calculate() {
   const monthlyRate = rate / 12;
   const inflationRate = inflation / 12;
 
-  let portfolio = 0;   // SPUS
-  let cash = 0;        // เงินสด
-
-  let investTotal = 0;
+  let portfolio = 0; // SPUS
+  let cash = 0;      // เงินสด
 
   let labels = [];
   let spusData = [];
   let cashData = [];
+  let buyingPowerData = [];
 
   let age = startAge;
 
   for (let m = 1; m <= months; m++) {
 
-    // 📈 ลงทุน SPUS
+    // 📈 SPUS
     portfolio = portfolio * (1 + monthlyRate) + monthly;
 
-    // 💰 เงินสด (ไม่งอก แต่โดนเงินเฟ้อกัด)
+    // 💰 เงินสด (โดนเงินเฟ้อ)
     cash = (cash + monthly) / (1 + inflationRate);
-
-    investTotal += monthly;
 
     if (m % 12 === 0) {
       labels.push(age);
@@ -178,15 +179,18 @@ function calculate() {
       spusData.push(Math.round(portfolio));
       cashData.push(Math.round(cash));
 
+      // 🛒 กำลังซื้อเงินสด (ของที่ซื้อได้)
+      buyingPowerData.push(Math.round(cash / itemPrice));
+
       age++;
     }
   }
 
   document.getElementById('result').innerHTML =
-    `📌 ทรัพย์สิน: ${assetName} (SPUS)<br>
-     💰 เงินลงทุนรวม: ${investTotal.toLocaleString()} บาท<br>
-     🚀 พอร์ต SPUS: ${Math.round(portfolio).toLocaleString()} บาท<br>
-     💸 เงินสด (โดนเงินเฟ้อ 3%): ${Math.round(cash).toLocaleString()} บาท`;
+    `📌 ทรัพย์สิน: ${assetName}<br>
+     📈 SPUS: ${Math.round(portfolio).toLocaleString()} บาท<br>
+     💰 เงินสดจริง (โดนเงินเฟ้อ): ${Math.round(cash).toLocaleString()} บาท<br>
+     🛒 ซื้อ ${itemName} ได้: ${Math.round(cash / itemPrice).toLocaleString()} หน่วย`;
 
   if (chart) chart.destroy();
 
@@ -196,17 +200,20 @@ function calculate() {
       labels,
       datasets: [
         {
-          label: `SPUS (ลงทุน)`,
+          label: "SPUS (ลงทุน)",
           data: spusData,
-          borderWidth: 2,
-          tension: 0.3
+          borderWidth: 2
         },
         {
-          label: `เงินสด (เงินเฟ้อ 3%)`,
+          label: "เงินสดจริง",
           data: cashData,
-          borderWidth: 2,
           borderDash: [5,5],
-          tension: 0.3
+          borderWidth: 2
+        },
+        {
+          label: `กำลังซื้อ (${itemName})`,
+          data: buyingPowerData,
+          borderWidth: 2
         }
       ]
     },
