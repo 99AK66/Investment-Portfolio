@@ -1,57 +1,145 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>DCA Calculator</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      font-family: Arial;
-      background: #111;
-      color: #fff;
-      text-align: center;
-      padding: 20px;
-    }
-    input, button {
-      padding: 10px;
-      margin: 5px;
-      border-radius: 8px;
-      border: none;
-    }
-    button {
-      background: #00c853;
-      color: #fff;
-      cursor: pointer;
-    }
-    canvas {
-      max-width: 100%;
-      margin-top: 20px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>DCA Calculator Pro</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 420px;
+  margin: auto;
+  background: rgba(255,255,255,0.05);
+  padding: 20px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+.input-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+label {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: #00e676;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  background: #00c853;
+}
+
+.result {
+  margin-top: 20px;
+  font-size: 16px;
+  background: rgba(0,0,0,0.3);
+  padding: 15px;
+  border-radius: 12px;
+}
+
+canvas {
+  margin-top: 20px;
+}
+</style>
 </head>
+
 <body>
 
-<h2>📊 DCA Calculator</h2>
+<div class="container">
+  <h2>📊 DCA Calculator</h2>
 
-<input type="number" id="monthly" placeholder="เงินต่อเดือน (บาท)" value="2000"><br>
-<input type="number" id="startAge" placeholder="อายุเริ่มต้น" value="28"><br>
-<input type="number" id="endAge" placeholder="อายุสิ้นสุด" value="60"><br>
-<input type="number" id="rate" placeholder="ผลตอบแทน % ต่อปี" value="10"><br>
+  <div class="input-group">
+    <label>เงินต่อเดือน (บาท)</label>
+    <input type="number" id="monthly" value="0">
+  </div>
 
-<button onclick="calculate()">คำนวณ</button>
+  <div class="input-group">
+    <label>อายุเริ่มต้น</label>
+    <input type="number" id="startAge" value="0">
+  </div>
 
-<h3 id="result"></h3>
+  <div class="input-group">
+    <label>อายุสิ้นสุด</label>
+    <input type="number" id="endAge" value="0">
+  </div>
 
-<canvas id="chart"></canvas>
+  <div class="input-group">
+    <label>รูปแบบผลตอบแทน</label>
+    <select id="preset" onchange="setRate()">
+      <option value="">-- เลือก --</option>
+      <option value="5">ทั่วไป (5%)</option>
+      <option value="10">ปานกลาง (10%)</option>
+      <option value="15">เติบโตสูง (15%)</option>
+    </select>
+  </div>
+
+  <div class="input-group">
+    <label>หรือกำหนด % เอง</label>
+    <input type="number" id="rate" value="0">
+  </div>
+
+  <button onclick="calculate()">คำนวณ</button>
+
+  <div class="result" id="result"></div>
+
+  <canvas id="chart"></canvas>
+</div>
 
 <script>
 let chart;
+
+function setRate() {
+  const preset = document.getElementById("preset").value;
+  if (preset) {
+    document.getElementById("rate").value = preset;
+  }
+}
 
 function calculate() {
   const monthly = parseFloat(document.getElementById('monthly').value);
   const startAge = parseInt(document.getElementById('startAge').value);
   const endAge = parseInt(document.getElementById('endAge').value);
   const rate = parseFloat(document.getElementById('rate').value) / 100;
+
+  if (endAge <= startAge) {
+    alert("อายุสิ้นสุดต้องมากกว่าเริ่มต้น");
+    return;
+  }
 
   const months = (endAge - startAge) * 12;
   const monthlyRate = rate / 12;
@@ -70,7 +158,7 @@ function calculate() {
 
     if (m % 12 === 0) {
       labels.push(age);
-      data.push(portfolio.toFixed(0));
+      data.push(Math.round(portfolio));
       age++;
     }
   }
@@ -81,33 +169,24 @@ function calculate() {
 
   if (chart) chart.destroy();
 
-  const ctx = document.getElementById('chart').getContext('2d');
-
-  chart = new Chart(ctx, {
+  chart = new Chart(document.getElementById('chart'), {
     type: 'line',
     data: {
       labels: labels,
       datasets: [{
         label: 'มูลค่าพอร์ต',
         data: data,
-        borderWidth: 2,
+        borderWidth: 3,
         tension: 0.3
       }]
     },
     options: {
-      responsive: true,
       plugins: {
-        legend: {
-          labels: { color: 'white' }
-        }
+        legend: { labels: { color: "#fff" } }
       },
       scales: {
-        x: {
-          ticks: { color: 'white' }
-        },
-        y: {
-          ticks: { color: 'white' }
-        }
+        x: { ticks: { color: "#fff" } },
+        y: { ticks: { color: "#fff" } }
       }
     }
   });
