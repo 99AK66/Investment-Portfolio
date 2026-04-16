@@ -203,6 +203,61 @@ function showStep(s){
 }
 
 function nextStep(){
+
+  if(currentStep === 1){
+    const asset = document.getElementById("assetName").value.trim();
+    if(!asset){
+      Swal.fire({
+        icon: 'warning',
+        title: 'ข้อมูลไม่ครบ',
+        text: 'กรุณากรอกชื่อทรัพย์สิน'
+      });
+      return;
+    }
+  }
+
+  if(currentStep === 2){
+    const monthly = document.getElementById("monthly").value;
+    const rate = document.getElementById("rate").value;
+    const startAge = document.getElementById("startAge").value;
+    const endAge = document.getElementById("endAge").value;
+
+    if(!monthly || !rate || !startAge || !endAge){
+      Swal.fire({
+        icon: 'warning',
+        title: 'ข้อมูลไม่ครบ',
+        text: 'กรุณากรอกข้อมูลการลงทุนให้ครบ'
+      });
+      return;
+    }
+  }
+
+  if(currentStep === 3){
+    const inflation = document.getElementById("inflation").value;
+    if(!inflation){
+      Swal.fire({
+        icon: 'warning',
+        title: 'ยังไม่ได้กรอก',
+        text: 'กรุณากรอกเงินเฟ้อ'
+      });
+      return;
+    }
+  }
+
+  if(currentStep === 4){
+    const itemName = document.getElementById("itemName").value.trim();
+    const itemPrice = document.getElementById("itemPrice").value;
+
+    if(!itemName || !itemPrice){
+      Swal.fire({
+        icon: 'warning',
+        title: 'ข้อมูลสินค้าไม่ครบ',
+        text: 'กรุณากรอกชื่อสินค้าและราคา'
+      });
+      return;
+    }
+  }
+
   if(currentStep < 5) currentStep++;
   showStep(currentStep);
 
@@ -342,6 +397,8 @@ function calculate(){
 }
 
 </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
 </html>
