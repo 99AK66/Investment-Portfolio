@@ -132,12 +132,14 @@ function setRate() {
 }
 
 function calculate() {
-  const assetName = document.getElementById('assetName').value || "Asset";
+  const assetName = document.getElementById('assetName').value || "SPUS";
 
   const monthly = parseFloat(document.getElementById('monthly').value);
   const startAge = parseInt(document.getElementById('startAge').value);
   const endAge = parseInt(document.getElementById('endAge').value);
   const rate = parseFloat(document.getElementById('rate').value) / 100;
+
+  const inflation = 0.03; // 🔥 เงินเฟ้อ 3% ต่อปี
 
   if (!monthly || !startAge || !endAge || !rate) {
     alert("กรอกข้อมูลให้ครบ");
@@ -145,31 +147,46 @@ function calculate() {
   }
 
   const months = (endAge - startAge) * 12;
-  const monthlyRate = rate / 12;
 
-  let portfolio = 0;
-  let total = 0;
+  const monthlyRate = rate / 12;
+  const inflationRate = inflation / 12;
+
+  let portfolio = 0;   // SPUS
+  let cash = 0;        // เงินสด
+
+  let investTotal = 0;
 
   let labels = [];
-  let data = [];
+  let spusData = [];
+  let cashData = [];
 
   let age = startAge;
 
   for (let m = 1; m <= months; m++) {
+
+    // 📈 ลงทุน SPUS
     portfolio = portfolio * (1 + monthlyRate) + monthly;
-    total += monthly;
+
+    // 💰 เงินสด (ไม่งอก แต่โดนเงินเฟ้อกัด)
+    cash = (cash + monthly) / (1 + inflationRate);
+
+    investTotal += monthly;
 
     if (m % 12 === 0) {
       labels.push(age);
-      data.push(Math.round(portfolio));
+
+      spusData.push(Math.round(portfolio));
+      cashData.push(Math.round(cash));
+
       age++;
     }
   }
 
   document.getElementById('result').innerHTML =
-    `📌 ทรัพย์สิน: ${assetName}<br>
-     💰 เงินลงทุนรวม: ${total.toLocaleString()} บาท<br>
-     🚀 พอร์ตสุดท้าย: ${Math.round(portfolio).toLocaleString()} บาท`;
+    `📌 ทรัพย์สิน: ${assetName} (SPUS)<br>
+     💰 เงินลงทุนรวม: ${investTotal.toLocaleString()} บาท<br>
+     🚀 พอร์ต SPUS: ${Math.round(portfolio).toLocaleString()} บาท<br>
+     💸 เงินสด (โดนเงินเฟ้อ 3%): ${Math.round(cash).toLocaleString()} บาท`;
 
   if (chart) chart.destroy();
 
@@ -177,12 +194,21 @@ function calculate() {
     type: "line",
     data: {
       labels,
-      datasets: [{
-        label: `มูลค่าพอร์ต (${assetName})`,
-        data,
-        borderWidth: 2,
-        tension: 0.3
-      }]
+      datasets: [
+        {
+          label: `SPUS (ลงทุน)`,
+          data: spusData,
+          borderWidth: 2,
+          tension: 0.3
+        },
+        {
+          label: `เงินสด (เงินเฟ้อ 3%)`,
+          data: cashData,
+          borderWidth: 2,
+          borderDash: [5,5],
+          tension: 0.3
+        }
+      ]
     },
     options: {
       responsive: true,
