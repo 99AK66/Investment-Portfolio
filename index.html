@@ -372,6 +372,7 @@ function calculate(){
 
   let port = 0;
   let cash = 0;
+  let currentPrice = itemPrice;
 
   let labels = [];
   let invest = [];
@@ -381,8 +382,10 @@ function calculate(){
 
   for(let m=1;m<=months;m++){
 
-    port = port * (1 + r) + monthly;
-    cash = (cash + monthly) / (1 + inf);
+port = port * (1 + r) + monthly;
+cash = (cash + monthly) / (1 + inf);
+
+currentPrice = currentPrice * (1 + inf);
 
     if(m % 12 === 0){
       labels.push(age);
@@ -392,8 +395,9 @@ function calculate(){
     }
   }
 
-  const investUnits = Math.round(port / itemPrice);
-  const cashUnits = Math.round(cash / itemPrice);
+const investUnits = Math.round(port / currentPrice);
+const cashUnits = Math.round(cash / currentPrice);
+  
   const ratio = (investUnits / cashUnits).toFixed(1);
 
 const total = monthly * months;
@@ -439,9 +443,11 @@ document.getElementById("result").innerHTML = `
 
 <br>
 
-💰 <b>ถือเงินสด:</b> ซื้อได้ <b>${cashUnits}</b> หน่วย (${itemName})<br>
+💰 <b>ถือเงินสด:</b> ซื้อ ${itemName} ได้ <b>${cashUnits}</b> หน่วย <br>
 
-📈 <b>DCA ใน ${assetName}:</b> ซื้อได้ <b>${investUnits}</b> หน่วย (${itemName})<br>
+📈 <b>DCA ใน ${assetName}:</b> ซื้อ ${itemName} ได้ <b>${investUnits}</b> หน่วย <br>
+
+🍛 ราคาของ ${itemName} ตอนเกษียณ ≈ <b>${Math.round(currentPrice).toLocaleString()}</b> บาท<br><br>
 
 💥 <b>พลาดโอกาส:</b> ${investUnits - cashUnits} หน่วย  
 ≈ <b>${((investUnits - cashUnits) * itemPrice).toLocaleString()}</b> บาท<br><br>
