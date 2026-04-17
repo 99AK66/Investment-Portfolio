@@ -133,6 +133,111 @@ button {
 
 .green { color: #00e676; }
 .red { color: #ff5252; }
+
+
+
+
+
+
+.result-container {
+  font-family: 'Prompt', sans-serif;
+  line-height: 1.6;
+}
+
+.section {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.section-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.highlight {
+  background: linear-gradient(135deg, #fff7ed, #ffedd5);
+}
+
+.inflation-line {
+  font-size: 18px;
+}
+
+.old-price {
+  text-decoration: line-through;
+  color: #888;
+  margin: 0 6px;
+}
+
+.new-price {
+  color: #ef4444;
+  font-weight: bold;
+  margin-left: 6px;
+}
+
+.arrow {
+  margin: 0 4px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.info-card {
+  background: #f9fafb;
+  padding: 14px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.info-card.success {
+  background: #ecfdf5;
+}
+
+.label {
+  font-size: 13px;
+  color: #666;
+}
+
+.value {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 4px 0;
+}
+
+.sub {
+  font-size: 13px;
+  color: #888;
+}
+
+.danger {
+  background: #fef2f2;
+  text-align: center;
+}
+
+.big-number {
+  font-size: 26px;
+  font-weight: bold;
+  color: #dc2626;
+}
+
+.summary {
+  text-align: center;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+}
+
+.ratio {
+  font-size: 28px;
+  font-weight: bold;
+  color: #2563eb;
+}
+
+
+  
   
 </style>
 </head>
@@ -408,54 +513,106 @@ const profitPercent = ((profit / total) * 100).toFixed(2);
 
 const profitClass = profit >= 0 ? "green" : "red";
 
-document.getElementById("result").innerHTML = `
-📌 <span class="badge">ทรัพย์สินที่คุณเลือก DCA</span><br>
+// document.getElementById("result").innerHTML = `
+// 📌 <span class="badge">ทรัพย์สินที่คุณเลือก DCA</span><br>
 
-<div class="asset-title">📊 ${assetName}</div><br>
+// <div class="asset-title">📊 ${assetName}</div><br>
 
-<div class="kpi-grid">
+// <div class="kpi-grid">
 
-  <div class="kpi-card">
-    <div class="kpi-title">💰 เงินลงทุนรวม</div>
-    <div class="kpi-value">${total.toLocaleString()} บาท</div>
-  </div>
+//   <div class="kpi-card">
+//     <div class="kpi-title">💰 เงินลงทุนรวม</div>
+//     <div class="kpi-value">${total.toLocaleString()} บาท</div>
+//   </div>
 
-  <div class="kpi-card">
-    <div class="kpi-title">🚀 พอร์ตสุดท้าย</div>
-    <div class="kpi-value">${Math.round(portfolio).toLocaleString()} บาท</div>
-  </div>
+//   <div class="kpi-card">
+//     <div class="kpi-title">🚀 พอร์ตสุดท้าย</div>
+//     <div class="kpi-value">${Math.round(portfolio).toLocaleString()} บาท</div>
+//   </div>
 
-  <div class="kpi-card">
-    <div class="kpi-title">📈 กำไร / ขาดทุน</div>
-    <div class="kpi-value ${profitClass}">
-      ${profit >= 0 ? "📈 +" : "📉"}${Math.round(profit).toLocaleString()} บาท
+//   <div class="kpi-card">
+//     <div class="kpi-title">📈 กำไร / ขาดทุน</div>
+//     <div class="kpi-value ${profitClass}">
+//       ${profit >= 0 ? "📈 +" : "📉"}${Math.round(profit).toLocaleString()} บาท
+//     </div>
+//   </div>
+
+//   <div class="kpi-card">
+//     <div class="kpi-title">⚡ ผลตอบแทน</div>
+//     <div class="kpi-value ${profitClass}">
+//       ${profit >= 0 ? "🟢" : "🔴"} ${profitPercent}%
+//     </div>
+//   </div>
+
+// </div>
+
+// <br>
+
+// 🤯 <b>เงินเฟ้อกำลังกัดกินเงินคุณ</b><br>
+// 🍛 ${itemName} จาก <b>${itemPrice.toLocaleString()}</b> บาท → ตอนเกษียณ ≈ <b>${Math.round(currentPrice).toLocaleString()}</b> บาท
+
+// 💰 <b>ถือเงินสด:</b> ซื้อ ${itemName} ได้ <b>${cashUnits}</b> หน่วย <br>
+
+// 📈 <b>DCA ใน ${assetName}:</b> ซื้อ ${itemName} ได้ <b>${investUnits}</b> หน่วย <br>
+
+// 💥 <b>พลาดโอกาส:</b> ${investUnits - cashUnits} หน่วย  
+// ≈ <b>${((investUnits - cashUnits) * itemPrice).toLocaleString()}</b> บาท<br><br>
+
+// ⚠️ เมื่อเปรียบเทียบการลงทุนใน <b>${assetName}</b> กับการถือเงินสด พบว่าเงินเติบโตต่างกัน <b>${ratio} เท่า</b><br>
+
+// ⏳ ระยะเวลา ${endAge - startAge} ปี ทำให้ผลต่างขยายแบบทวีคูณ
+// `;
+
+  document.getElementById("result").innerHTML = `
+<div class="result-container">
+
+  <div class="section highlight">
+    <div class="section-title">🤯 เงินเฟ้อกำลังกัดกินเงินคุณ</div>
+    <div class="inflation-line">
+      🍛 ${itemName}
+      <span class="old-price">${itemPrice.toLocaleString()} บาท</span>
+      <span class="arrow">→</span>
+      <span class="new-price">${Math.round(currentPrice).toLocaleString()} บาท</span>
     </div>
   </div>
 
-  <div class="kpi-card">
-    <div class="kpi-title">⚡ ผลตอบแทน</div>
-    <div class="kpi-value ${profitClass}">
-      ${profit >= 0 ? "🟢" : "🔴"} ${profitPercent}%
+  <div class="section grid-2">
+    <div class="info-card">
+      <div class="label">💰 ถือเงินสด</div>
+      <div class="value">${cashUnits}</div>
+      <div class="sub">หน่วยของ ${itemName}</div>
+    </div>
+
+    <div class="info-card success">
+      <div class="label">📈 DCA ใน ${assetName}</div>
+      <div class="value">${investUnits}</div>
+      <div class="sub">หน่วยของ ${itemName}</div>
+    </div>
+  </div>
+
+  <div class="section danger">
+    <div class="section-title">💥 พลาดโอกาส</div>
+    <div class="big-number">
+      ${investUnits - cashUnits} หน่วย
+    </div>
+    <div class="sub">
+      ≈ ${((investUnits - cashUnits) * itemPrice).toLocaleString()} บาท
+    </div>
+  </div>
+
+  <div class="section summary">
+    <div class="summary-line">
+      ⚠️ ลงทุนใน <b>${assetName}</b> โตมากกว่าเงินสด
+    </div>
+    <div class="ratio">
+      ${ratio} เท่า
+    </div>
+    <div class="sub">
+      ⏳ ภายใน ${endAge - startAge} ปี (ทบต้นแบบก้าวกระโดด)
     </div>
   </div>
 
 </div>
-
-<br>
-
-🤯 <b>เงินเฟ้อกำลังกัดกินเงินคุณ</b><br>
-🍛 ${itemName} จากวันนี้ → ตอนเกษียณ ≈ <b>${Math.round(currentPrice).toLocaleString()}</b> บาท<br><br>
-
-💰 <b>ถือเงินสด:</b> ซื้อ ${itemName} ได้ <b>${cashUnits}</b> หน่วย <br>
-
-📈 <b>DCA ใน ${assetName}:</b> ซื้อ ${itemName} ได้ <b>${investUnits}</b> หน่วย <br>
-
-💥 <b>พลาดโอกาส:</b> ${investUnits - cashUnits} หน่วย  
-≈ <b>${((investUnits - cashUnits) * itemPrice).toLocaleString()}</b> บาท<br><br>
-
-⚠️ เมื่อเปรียบเทียบการลงทุนใน <b>${assetName}</b> กับการถือเงินสด พบว่าเงินเติบโตต่างกัน <b>${ratio} เท่า</b><br>
-
-⏳ ระยะเวลา ${endAge - startAge} ปี ทำให้ผลต่างขยายแบบทวีคูณ
 `;
 
   if(chart) chart.destroy();
