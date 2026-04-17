@@ -443,11 +443,12 @@ document.getElementById("result").innerHTML = `
 
 <br>
 
+🤯 <b>เงินเฟ้อกำลังกัดกินเงินคุณ</b><br>
+🍛 ${itemName} จากวันนี้ → ตอนเกษียณ ≈ <b>${Math.round(currentPrice).toLocaleString()}</b> บาท<br><br>
+
 💰 <b>ถือเงินสด:</b> ซื้อ ${itemName} ได้ <b>${cashUnits}</b> หน่วย <br>
 
 📈 <b>DCA ใน ${assetName}:</b> ซื้อ ${itemName} ได้ <b>${investUnits}</b> หน่วย <br>
-
-🍛 ราคาของ ${itemName} ตอนเกษียณ ≈ <b>${Math.round(currentPrice).toLocaleString()}</b> บาท<br><br>
 
 💥 <b>พลาดโอกาส:</b> ${investUnits - cashUnits} หน่วย  
 ≈ <b>${((investUnits - cashUnits) * itemPrice).toLocaleString()}</b> บาท<br><br>
