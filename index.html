@@ -139,7 +139,68 @@ button {
 
 
 
+.insight-box {
+  background: var(--bg-card, rgba(255,255,255,0.05));
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-radius: 14px;
+  padding: 14px;
+  margin-top: 10px;
+}
 
+.insight-header {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.insight-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.compare-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.label {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.value {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 4px;
+}
+
+.sub {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+.highlight {
+  color: #00e676;
+}
+
+.loss-box {
+  text-align: center;
+  font-size: 13px;
+}
+
+.summary {
+  text-align: center;
+  font-size: 13px;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border, rgba(255,255,255,0.1));
+  margin: 10px 0;
+}
 
 
   
@@ -455,19 +516,70 @@ document.getElementById("result").innerHTML = `
 
 <br>
 
-🤯 <b>เงินเฟ้อกำลังกัดกินเงินคุณ</b><br>
-🍛 ${itemName} จาก <b>${itemPrice.toLocaleString()}</b> บาท → ตอนเกษียณ ≈ <b>${Math.round(currentPrice).toLocaleString()}</b> บาท <br>
+// 🤯 <b>เงินเฟ้อกำลังกัดกินเงินคุณ</b><br>
+// 🍛 ${itemName} จาก <b>${itemPrice.toLocaleString()}</b> บาท → ตอนเกษียณ ≈ <b>${Math.round(currentPrice).toLocaleString()}</b> บาท <br>
 
-💰 <b>ถือเงินสด:</b> ซื้อ ${itemName} ได้ <b>${cashUnits}</b> หน่วย <br>
+// 💰 <b>ถือเงินสด:</b> ซื้อ ${itemName} ได้ <b>${cashUnits}</b> หน่วย <br>
 
-📈 <b>DCA ใน ${assetName}:</b> ซื้อ ${itemName} ได้ <b>${investUnits}</b> หน่วย <br>
+// 📈 <b>DCA ใน ${assetName}:</b> ซื้อ ${itemName} ได้ <b>${investUnits}</b> หน่วย <br>
 
-💥 <b>พลาดโอกาส:</b> ${investUnits - cashUnits} หน่วย  
-≈ <b>${((investUnits - cashUnits) * itemPrice).toLocaleString()}</b> บาท<br><br>
+// 💥 <b>พลาดโอกาส:</b> ${investUnits - cashUnits} หน่วย  
+// ≈ <b>${((investUnits - cashUnits) * itemPrice).toLocaleString()}</b> บาท<br><br>
 
-⚠️ เมื่อเปรียบเทียบการลงทุนใน <b>${assetName}</b> กับการถือเงินสด พบว่าเงินเติบโตต่างกัน <b>${ratio} เท่า</b><br>
+// ⚠️ เมื่อเปรียบเทียบการลงทุนใน <b>${assetName}</b> กับการถือเงินสด พบว่าเงินเติบโตต่างกัน <b>${ratio} เท่า</b><br>
 
-⏳ ระยะเวลา ${endAge - startAge} ปี ทำให้ผลต่างขยายแบบทวีคูณ
+// ⏳ ระยะเวลา ${endAge - startAge} ปี ทำให้ผลต่างขยายแบบทวีคูณ
+
+<div class="insight-box">
+
+  <div class="insight-header">
+    🤯 เงินเฟ้อกำลังกัดกินเงินคุณ
+  </div>
+
+  <div class="insight-row">
+    <span>🍛 ${itemName}</span>
+    <span>
+      <b>${itemPrice.toLocaleString()}</b> → 
+      <b class="highlight">${Math.round(currentPrice).toLocaleString()}</b> บาท
+    </span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="compare-row">
+    <div>
+      <div class="label">💰 ถือเงินสด</div>
+      <div class="value">${cashUnits}</div>
+      <div class="sub">หน่วย</div>
+    </div>
+
+    <div>
+      <div class="label">📈 DCA</div>
+      <div class="value highlight">${investUnits}</div>
+      <div class="sub">หน่วย</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="loss-box">
+    💥 พลาดโอกาส <b>${investUnits - cashUnits}</b> หน่วย  
+    <div class="sub">
+      ≈ ${((investUnits - cashUnits) * itemPrice).toLocaleString()} บาท
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="summary">
+    ⚠️ DCA มากกว่าเงินสด <b class="highlight">${ratio} เท่า</b>
+    <div class="sub">
+      ⏳ ในช่วง ${endAge - startAge} ปี (พลังทบต้น)
+    </div>
+  </div>
+
+</div>
+
 `;
 
 
