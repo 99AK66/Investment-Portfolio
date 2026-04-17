@@ -139,93 +139,7 @@ button {
 
 
 
-:root {
-  --bg-card: rgba(255,255,255,0.06);
-  --text-main: #ffffff;
-  --text-sub: rgba(255,255,255,0.6);
-  --accent: #00e676;
-  --border: rgba(255,255,255,0.1);
-}
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg-card: #ffffff;
-    --text-main: #111;
-    --text-sub: #666;
-    --accent: #00c853;
-    --border: #e5e5e5;
-  }
-}
-
-.result-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.result-header {
-  text-align: center;
-}
-
-.asset-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--accent);
-  margin-top: 6px;
-}
-
-.kpi-card, .compare-card, .insight-card, .summary-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px;
-}
-
-.kpi-card.highlight,
-.compare-card.highlight {
-  border: 1px solid var(--accent);
-}
-
-.kpi-title, .compare-title {
-  font-size: 12px;
-  color: var(--text-sub);
-}
-
-.kpi-value, .compare-value {
-  font-size: 18px;
-  font-weight: 700;
-  margin-top: 4px;
-}
-
-.kpi-sub, .compare-sub {
-  font-size: 11px;
-  color: var(--text-sub);
-}
-
-.insight-title {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.insight-text {
-  color: var(--text-sub);
-}
-
-.compare-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.summary-card {
-  text-align: center;
-}
-
-.summary-sub {
-  font-size: 12px;
-  color: var(--text-sub);
-  margin-top: 4px;
-}
 
 
   
@@ -504,150 +418,61 @@ const profitPercent = ((profit / total) * 100).toFixed(2);
 
 const profitClass = profit >= 0 ? "green" : "red";
 
-// document.getElementById("result").innerHTML = `
-// 📌 <span class="badge">ทรัพย์สินที่คุณเลือก DCA</span><br>
-
-// <div class="asset-title">📊 ${assetName}</div><br>
-
-// <div class="kpi-grid">
-
-//   <div class="kpi-card">
-//     <div class="kpi-title">💰 เงินลงทุนรวม</div>
-//     <div class="kpi-value">${total.toLocaleString()} บาท</div>
-//   </div>
-
-//   <div class="kpi-card">
-//     <div class="kpi-title">🚀 พอร์ตสุดท้าย</div>
-//     <div class="kpi-value">${Math.round(portfolio).toLocaleString()} บาท</div>
-//   </div>
-
-//   <div class="kpi-card">
-//     <div class="kpi-title">📈 กำไร / ขาดทุน</div>
-//     <div class="kpi-value ${profitClass}">
-//       ${profit >= 0 ? "📈 +" : "📉"}${Math.round(profit).toLocaleString()} บาท
-//     </div>
-//   </div>
-
-//   <div class="kpi-card">
-//     <div class="kpi-title">⚡ ผลตอบแทน</div>
-//     <div class="kpi-value ${profitClass}">
-//       ${profit >= 0 ? "🟢" : "🔴"} ${profitPercent}%
-//     </div>
-//   </div>
-
-// </div>
-
-// <br>
-
-// 🤯 <b>เงินเฟ้อกำลังกัดกินเงินคุณ</b><br>
-// 🍛 ${itemName} จาก <b>${itemPrice.toLocaleString()}</b> บาท → ตอนเกษียณ ≈ <b>${Math.round(currentPrice).toLocaleString()}</b> บาท <br>
-
-// 💰 <b>ถือเงินสด:</b> ซื้อ ${itemName} ได้ <b>${cashUnits}</b> หน่วย <br>
-
-// 📈 <b>DCA ใน ${assetName}:</b> ซื้อ ${itemName} ได้ <b>${investUnits}</b> หน่วย <br>
-
-// 💥 <b>พลาดโอกาส:</b> ${investUnits - cashUnits} หน่วย  
-// ≈ <b>${((investUnits - cashUnits) * itemPrice).toLocaleString()}</b> บาท<br><br>
-
-// ⚠️ เมื่อเปรียบเทียบการลงทุนใน <b>${assetName}</b> กับการถือเงินสด พบว่าเงินเติบโตต่างกัน <b>${ratio} เท่า</b><br>
-
-// ⏳ ระยะเวลา ${endAge - startAge} ปี ทำให้ผลต่างขยายแบบทวีคูณ
-// `;
-
-
+  
 
 document.getElementById("result").innerHTML = `
+📌 <span class="badge">ทรัพย์สินที่คุณเลือก DCA</span><br>
 
-<div class="result-wrapper">
+<div class="asset-title">📊 ${assetName}</div><br>
 
-  <!-- HEADER -->
-  <div class="result-header">
-    <div class="badge">DCA Portfolio</div>
-    <div class="asset-title">${assetName}</div>
+<div class="kpi-grid">
+
+  <div class="kpi-card">
+    <div class="kpi-title">💰 เงินลงทุนรวม</div>
+    <div class="kpi-value">${total.toLocaleString()} บาท</div>
   </div>
 
-  <!-- KPI -->
-  <div class="kpi-grid">
-
-    <div class="kpi-card">
-      <div class="kpi-title">เงินลงทุนรวม</div>
-      <div class="kpi-value">${total.toLocaleString()}</div>
-      <div class="kpi-sub">บาท</div>
-    </div>
-
-    <div class="kpi-card highlight">
-      <div class="kpi-title">มูลค่าพอร์ต</div>
-      <div class="kpi-value">${Math.round(portfolio).toLocaleString()}</div>
-      <div class="kpi-sub">บาท</div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-title">กำไร / ขาดทุน</div>
-      <div class="kpi-value ${profitClass}">
-        ${profit >= 0 ? "+" : ""}${Math.round(profit).toLocaleString()}
-      </div>
-      <div class="kpi-sub">บาท</div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-title">ผลตอบแทน</div>
-      <div class="kpi-value ${profitClass}">
-        ${profitPercent}%
-      </div>
-    </div>
-
+  <div class="kpi-card">
+    <div class="kpi-title">🚀 พอร์ตสุดท้าย</div>
+    <div class="kpi-value">${Math.round(portfolio).toLocaleString()} บาท</div>
   </div>
 
-  <!-- INSIGHT -->
-  <div class="insight-card">
-
-    <div class="insight-title">📉 เงินเฟ้อ</div>
-    <div class="insight-text">
-      ${itemName} จาก <b>${itemPrice.toLocaleString()}</b> → 
-      <b>${Math.round(currentPrice).toLocaleString()}</b> บาท
+  <div class="kpi-card">
+    <div class="kpi-title">📈 กำไร / ขาดทุน</div>
+    <div class="kpi-value ${profitClass}">
+      ${profit >= 0 ? "📈 +" : "📉"}${Math.round(profit).toLocaleString()} บาท
     </div>
-
   </div>
 
-  <!-- COMPARISON -->
-  <div class="compare-grid">
-
-    <div class="compare-card">
-      <div class="compare-title">💵 ถือเงินสด</div>
-      <div class="compare-value">${cashUnits}</div>
-      <div class="compare-sub">หน่วย ${itemName}</div>
+  <div class="kpi-card">
+    <div class="kpi-title">⚡ ผลตอบแทน</div>
+    <div class="kpi-value ${profitClass}">
+      ${profit >= 0 ? "🟢" : "🔴"} ${profitPercent}%
     </div>
-
-    <div class="compare-card highlight">
-      <div class="compare-title">📈 DCA</div>
-      <div class="compare-value">${investUnits}</div>
-      <div class="compare-sub">หน่วย ${itemName}</div>
-    </div>
-
-  </div>
-
-  <!-- SUMMARY -->
-  <div class="summary-card">
-
-    <div>พลาดโอกาส <b>${investUnits - cashUnits}</b> หน่วย</div>
-    <div class="summary-sub">
-      ≈ ${((investUnits - cashUnits) * itemPrice).toLocaleString()} บาท
-    </div>
-
-    <hr>
-
-    <div>
-      DCA ชนะเงินสด <b>${ratio} เท่า</b>
-    </div>
-
-    <div class="summary-sub">
-      ในช่วงเวลา ${endAge - startAge} ปี (Compound Effect)
-    </div>
-
   </div>
 
 </div>
+
+<br>
+
+🤯 <b>เงินเฟ้อกำลังกัดกินเงินคุณ</b><br>
+🍛 ${itemName} จาก <b>${itemPrice.toLocaleString()}</b> บาท → ตอนเกษียณ ≈ <b>${Math.round(currentPrice).toLocaleString()}</b> บาท <br>
+
+💰 <b>ถือเงินสด:</b> ซื้อ ${itemName} ได้ <b>${cashUnits}</b> หน่วย <br>
+
+📈 <b>DCA ใน ${assetName}:</b> ซื้อ ${itemName} ได้ <b>${investUnits}</b> หน่วย <br>
+
+💥 <b>พลาดโอกาส:</b> ${investUnits - cashUnits} หน่วย  
+≈ <b>${((investUnits - cashUnits) * itemPrice).toLocaleString()}</b> บาท<br><br>
+
+⚠️ เมื่อเปรียบเทียบการลงทุนใน <b>${assetName}</b> กับการถือเงินสด พบว่าเงินเติบโตต่างกัน <b>${ratio} เท่า</b><br>
+
+⏳ ระยะเวลา ${endAge - startAge} ปี ทำให้ผลต่างขยายแบบทวีคูณ
 `;
+
+
+
+
 
   
 
