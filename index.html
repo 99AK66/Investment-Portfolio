@@ -452,7 +452,6 @@ document.getElementById("result").innerHTML = `
 
 </div>
 
-
 <br> 🤯 <b>เงินเฟ้อกำลังกัดกินเงินคุณ</b><br> 
 
 🍛 ${itemName} จาก <b>${itemPrice.toLocaleString()}</b> บาท → ตอนเกษียณ ≈ <b>${Math.round(currentPrice).toLocaleString()}</b> บาท 
@@ -466,7 +465,7 @@ document.getElementById("result").innerHTML = `
 ⚠️ เมื่อเปรียบเทียบการลงทุนใน <b>${assetName}</b> กับการถือเงินสด พบว่าเงินเติบโตต่างกัน <b>${ratio} เท่า</b><br> 
 
 ⏳ ระยะเวลา ${endAge - startAge} ปี ทำให้ผลต่างขยายแบบทวีคูณ
-;
+`;
 
 
   if(chart) chart.destroy();
