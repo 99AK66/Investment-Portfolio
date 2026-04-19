@@ -449,8 +449,12 @@ const profitClass = profit >= 0 ? "green" : "red";
  
   
 
-const win = investUnits > cashUnits;
+// ==== คำนวณ ====
+const investUnits = Math.round(port / currentPrice);
+const cashUnits = Math.round(cash / currentPrice);
+
 const diff = investUnits - cashUnits;
+const win = investUnits > cashUnits;
 
 document.getElementById("result").innerHTML = `
 📌 <span class="badge">ทรัพย์สินที่คุณเลือก DCA</span>
@@ -567,11 +571,11 @@ document.getElementById("result").innerHTML = `
   animate(chart, labels, invest, cashArr);
 }
 
-   function animateValue(id, end){
+// ==== animation function ====
+function animateValue(id, end){
   let start = 0;
   const duration = 1000;
   const step = end / (duration / 16);
-
   const el = document.getElementById(id);
 
   const counter = setInterval(()=>{
@@ -584,12 +588,14 @@ document.getElementById("result").innerHTML = `
   },16);
 }
 
-// run animation
+
+// ==== run animation ====
 animateValue("cashNum", cashUnits);
 animateValue("investNum", investUnits);
 animateValue("diffNum", diff);
 
-// progress bar
+
+// ==== progress bar ====
 const max = Math.max(investUnits, cashUnits);
 
 setTimeout(()=>{
