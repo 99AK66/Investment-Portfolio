@@ -446,38 +446,7 @@ const profitPercent = ((profit / total) * 100).toFixed(2);
 
 const profitClass = profit >= 0 ? "green" : "red";
 
-  function animateValue(id, end){
-  let start = 0;
-  const duration = 1000;
-  const step = end / (duration / 16);
-
-  const el = document.getElementById(id);
-
-  const counter = setInterval(()=>{
-    start += step;
-    if(start >= end){
-      start = end;
-      clearInterval(counter);
-    }
-    el.innerText = Math.floor(start).toLocaleString();
-  },16);
-}
-
-// run animation
-animateValue("cashNum", cashUnits);
-animateValue("investNum", investUnits);
-animateValue("diffNum", diff);
-
-// progress bar
-const max = Math.max(investUnits, cashUnits);
-
-setTimeout(()=>{
-  document.getElementById("cashBar").style.width =
-    (cashUnits / max * 100) + "%";
-
-  document.getElementById("investBar").style.width =
-    (investUnits / max * 100) + "%";
-},200);
+ 
   
 
 const win = investUnits > cashUnits;
@@ -597,6 +566,39 @@ document.getElementById("result").innerHTML = `
 
   animate(chart, labels, invest, cashArr);
 }
+
+   function animateValue(id, end){
+  let start = 0;
+  const duration = 1000;
+  const step = end / (duration / 16);
+
+  const el = document.getElementById(id);
+
+  const counter = setInterval(()=>{
+    start += step;
+    if(start >= end){
+      start = end;
+      clearInterval(counter);
+    }
+    el.innerText = Math.floor(start).toLocaleString();
+  },16);
+}
+
+// run animation
+animateValue("cashNum", cashUnits);
+animateValue("investNum", investUnits);
+animateValue("diffNum", diff);
+
+// progress bar
+const max = Math.max(investUnits, cashUnits);
+
+setTimeout(()=>{
+  document.getElementById("cashBar").style.width =
+    (cashUnits / max * 100) + "%";
+
+  document.getElementById("investBar").style.width =
+    (investUnits / max * 100) + "%";
+},200);
 
 </script>
 
