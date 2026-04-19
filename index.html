@@ -453,51 +453,50 @@ document.getElementById("result").innerHTML = `
 </div>
 
 <div class="kpi-card" style="margin-top:15px;">
-  <div class="kpi-title">🤯 ผลกระทบจากเงินเฟ้อ</div>
+  <div class="kpi-title">🤯 ผลกระทบจากเงินเฟ้อ (${(inflation*100).toFixed(1)}% ต่อปี)</div>
 
-  <div style="margin-top:10px; line-height:1.6;">
-    🍛 <b>${itemName}</b><br>
-    <span style="opacity:0.7;">วันนี้</span> ${itemPrice.toLocaleString()} บาท 
-    → <span style="opacity:0.7;">อนาคต</span> 
-    <b class="red">${Math.round(currentPrice).toLocaleString()} บาท</b>
-  </div>
-</div>
+  <div style="margin-top:10px; line-height:1.7;">
+    🍛 สินค้า: <b>${itemName}</b><br>
 
-<div class="kpi-grid">
+    📍 ราคาวันนี้: <b>${itemPrice.toLocaleString()} บาท</b><br>
+    📍 ราคาตอนเกษียณ: <b class="red">${Math.round(currentPrice).toLocaleString()} บาท</b><br><br>
 
-  <div class="kpi-card">
-    <div class="kpi-title">💰 ถือเงินสด</div>
-    <div class="kpi-value">
-      ${cashUnits.toLocaleString()} หน่วย
-    </div>
-  </div>
-
-  <div class="kpi-card">
-    <div class="kpi-title">📈 ลงทุน DCA</div>
-    <div class="kpi-value green">
-      ${investUnits.toLocaleString()} หน่วย
-    </div>
-  </div>
-
-</div>
-
-<div class="kpi-card" style="margin-top:10px;">
-  <div class="kpi-title">💥 โอกาสที่เสียไป</div>
-  <div class="kpi-value red">
-    ${(investUnits - cashUnits).toLocaleString()} หน่วย
-  </div>
-  <div style="opacity:0.7; font-size:12px; margin-top:5px;">
-    ≈ ${((investUnits - cashUnits) * itemPrice).toLocaleString()} บาท
+    💬 หมายความว่า "เงินเท่าเดิม ซื้อของได้น้อยลง"
   </div>
 </div>
 
 <div class="kpi-card" style="margin-top:10px;">
-  <div class="kpi-title">⚖️ เปรียบเทียบผลลัพธ์</div>
+  <div class="kpi-title">💰 ถ้าคุณ “ถือเงินสด”</div>
+  <div style="margin-top:8px; line-height:1.6;">
+    คุณจะซื้อ <b>${itemName}</b> ได้ประมาณ 
+    <b>${cashUnits.toLocaleString()}</b> หน่วย
+  </div>
+</div>
+
+<div class="kpi-card" style="margin-top:10px;">
+  <div class="kpi-title">📈 ถ้าคุณ “ลงทุนแบบ DCA ใน ${assetName}”</div>
+  <div style="margin-top:8px; line-height:1.6;">
+    คุณจะซื้อ <b>${itemName}</b> ได้ประมาณ 
+    <b class="green">${investUnits.toLocaleString()}</b> หน่วย
+  </div>
+</div>
+
+<div class="kpi-card" style="margin-top:10px;">
+  <div class="kpi-title">💥 ส่วนต่างที่เกิดขึ้น</div>
   <div class="kpi-value">
-    โตต่างกัน <b class="green">${ratio} เท่า</b>
+    มากกว่า <b class="green">${(investUnits - cashUnits).toLocaleString()}</b> หน่วย
   </div>
   <div style="opacity:0.7; font-size:12px; margin-top:5px;">
-    ⏳ ภายใน ${endAge - startAge} ปี ทำให้ผลต่างขยายแบบทวีคูณ
+    ≈ ${((investUnits - cashUnits) * itemPrice).toLocaleString()} บาท (มูลค่า ณ วันนี้)
+  </div>
+</div>
+
+<div class="kpi-card" style="margin-top:10px;">
+  <div class="kpi-title">⚖️ สรุปภาพรวม</div>
+  <div style="margin-top:8px; line-height:1.6;">
+    การลงทุนใน <b>${assetName}</b> ทำให้กำลังซื้อของคุณ 
+    <b class="green">มากกว่าเงินสด ${ratio} เท่า</b><br>
+    ภายใน ${endAge - startAge} ปี จากพลังของ “ดอกเบี้ยทบต้น”
   </div>
 </div>
 `;
