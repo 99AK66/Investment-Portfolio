@@ -138,36 +138,6 @@ button {
 
 
 
-.badge-red {
-  background: linear-gradient(135deg, #ff5252, #ff1744);
-  color: #fff;
-}
-.badge-green {
-  background: linear-gradient(135deg, #00e676, #00c853);
-  color: #000;
-}
-.progress {
-  width: 100%;
-  height: 10px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 999px;
-  overflow: hidden;
-  margin-top: 8px;
-}
-.progress-bar {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg,#00e676,#00c853);
-  transition: width 1.2s ease;
-}
-.highlight {
-  animation: pop 0.6s ease;
-}
-@keyframes pop {
-  0% { transform: scale(0.8); opacity: 0.5; }
-  60% { transform: scale(1.15); }
-  100% { transform: scale(1); opacity: 1; }
-}
 
 
   
@@ -450,11 +420,8 @@ const profitClass = profit >= 0 ? "green" : "red";
   
 
 // ==== คำนวณ ====
-const investUnits = Math.round(port / currentPrice);
-const cashUnits = Math.round(cash / currentPrice);
-
-const diff = investUnits - cashUnits;
 const win = investUnits > cashUnits;
+const diff = investUnits - cashUnits;
 
 document.getElementById("result").innerHTML = `
 📌 <span class="badge">ทรัพย์สินที่คุณเลือก DCA</span>
@@ -540,7 +507,7 @@ document.getElementById("result").innerHTML = `
   </div>
 </div>
 `;
-
+  
   if(chart) chart.destroy();
 
   chart = new Chart(document.getElementById("chart"), {
@@ -571,40 +538,7 @@ document.getElementById("result").innerHTML = `
   animate(chart, labels, invest, cashArr);
 }
 
-// ==== animation function ====
-function animateValue(id, end){
-  let start = 0;
-  const duration = 1000;
-  const step = end / (duration / 16);
-  const el = document.getElementById(id);
 
-  const counter = setInterval(()=>{
-    start += step;
-    if(start >= end){
-      start = end;
-      clearInterval(counter);
-    }
-    el.innerText = Math.floor(start).toLocaleString();
-  },16);
-}
-
-
-// ==== run animation ====
-animateValue("cashNum", cashUnits);
-animateValue("investNum", investUnits);
-animateValue("diffNum", diff);
-
-
-// ==== progress bar ====
-const max = Math.max(investUnits, cashUnits);
-
-setTimeout(()=>{
-  document.getElementById("cashBar").style.width =
-    (cashUnits / max * 100) + "%";
-
-  document.getElementById("investBar").style.width =
-    (investUnits / max * 100) + "%";
-},200);
 
 </script>
 
