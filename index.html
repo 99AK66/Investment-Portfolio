@@ -454,19 +454,60 @@ document.getElementById("result").innerHTML = `
 
 <br>
 
-🤯 <b>เงินเฟ้อกำลังกัดกินเงินคุณ</b><br>
-🍛 ${itemName} จาก <b>${itemPrice.toLocaleString()}</b> บาท → ตอนเกษียณ ≈ <b>${Math.round(currentPrice).toLocaleString()}</b> บาท <br>
 
-💰 <b>ถือเงินสด:</b> ซื้อ ${itemName} ได้ <b>${cashUnits}</b> หน่วย <br>
 
-📈 <b>DCA ใน ${assetName}:</b> ซื้อ ${itemName} ได้ <b>${investUnits}</b> หน่วย <br>
+<div class="insight-box">
 
-💥 <b>พลาดโอกาส:</b> ${investUnits - cashUnits} หน่วย  
-≈ <b>${((investUnits - cashUnits) * itemPrice).toLocaleString()}</b> บาท<br><br>
+  <div class="insight-header">
+    🤯 เงินเฟ้อกำลังกัดกินเงินคุณ
+  </div>
 
-⚠️ เมื่อเปรียบเทียบการลงทุนใน <b>${assetName}</b> กับการถือเงินสด พบว่าเงินเติบโตต่างกัน <b>${ratio} เท่า</b><br>
+  <div class="insight-row">
+    <span>🍛 ${itemName}</span>
+    <span>
+      <b>${itemPrice.toLocaleString()}</b> → 
+      <b class="highlight">${Math.round(currentPrice).toLocaleString()}</b> บาท
+    </span>
+  </div>
 
-⏳ ระยะเวลา ${endAge - startAge} ปี ทำให้ผลต่างขยายแบบทวีคูณ
+  <div class="divider"></div>
+
+  <div class="compare-row">
+    <div>
+      <div class="label">💰 ถือเงินสด</div>
+      <div class="value">${cashUnits}</div>
+      <div class="sub">หน่วย</div>
+    </div>
+
+    <div>
+      <div class="label">📈 DCA</div>
+      <div class="value highlight">${investUnits}</div>
+      <div class="sub">หน่วย</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="loss-box">
+    💥 พลาดโอกาส <b>${investUnits - cashUnits}</b> หน่วย  
+    <div class="sub">
+      ≈ ${((investUnits - cashUnits) * itemPrice).toLocaleString()} บาท
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="summary">
+    ⚠️ DCA มากกว่าเงินสด <b class="highlight">${ratio} เท่า</b>
+    <div class="sub">
+      ⏳ ในช่วง ${endAge - startAge} ปี (พลังทบต้น)
+    </div>
+  </div>
+
+</div>
+
+
+
 
 `;
 
