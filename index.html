@@ -420,9 +420,9 @@ const profitClass = profit >= 0 ? "green" : "red";
   
 
 document.getElementById("result").innerHTML = `
-📌 <span class="badge">ทรัพย์สินที่คุณเลือก DCA</span><br>
+📌 <span class="badge">ทรัพย์สินที่คุณเลือก DCA</span>
 
-<div class="asset-title">📊 ${assetName}</div><br>
+<div class="asset-title">📊 ${assetName}</div>
 
 <div class="kpi-grid">
 
@@ -452,19 +452,54 @@ document.getElementById("result").innerHTML = `
 
 </div>
 
-<br> 🤯 <b>เงินเฟ้อกำลังกัดกินเงินคุณ</b><br> 
+<div class="kpi-card" style="margin-top:15px;">
+  <div class="kpi-title">🤯 ผลกระทบจากเงินเฟ้อ</div>
 
-🍛 ${itemName} จาก <b>${itemPrice.toLocaleString()}</b> บาท → ตอนเกษียณ ≈ <b>${Math.round(currentPrice).toLocaleString()}</b> บาท 
+  <div style="margin-top:10px; line-height:1.6;">
+    🍛 <b>${itemName}</b><br>
+    <span style="opacity:0.7;">วันนี้</span> ${itemPrice.toLocaleString()} บาท 
+    → <span style="opacity:0.7;">อนาคต</span> 
+    <b class="red">${Math.round(currentPrice).toLocaleString()} บาท</b>
+  </div>
+</div>
 
-💰 <b>ถือเงินสด:</b> ซื้อ ${itemName} ได้ <b>${cashUnits}</b> หน่วย <br> 
+<div class="kpi-grid">
 
-📈 <b>DCA ใน ${assetName}:</b> ซื้อ ${itemName} ได้ <b>${investUnits}</b> หน่วย <br> 
+  <div class="kpi-card">
+    <div class="kpi-title">💰 ถือเงินสด</div>
+    <div class="kpi-value">
+      ${cashUnits.toLocaleString()} หน่วย
+    </div>
+  </div>
 
-💥 <b>พลาดโอกาส:</b> ${investUnits - cashUnits} หน่วย ≈ <b>${((investUnits - cashUnits) * itemPrice).toLocaleString()}</b> บาท<br><br> 
+  <div class="kpi-card">
+    <div class="kpi-title">📈 ลงทุน DCA</div>
+    <div class="kpi-value green">
+      ${investUnits.toLocaleString()} หน่วย
+    </div>
+  </div>
 
-⚠️ เมื่อเปรียบเทียบการลงทุนใน <b>${assetName}</b> กับการถือเงินสด พบว่าเงินเติบโตต่างกัน <b>${ratio} เท่า</b><br> 
+</div>
 
-⏳ ระยะเวลา ${endAge - startAge} ปี ทำให้ผลต่างขยายแบบทวีคูณ
+<div class="kpi-card" style="margin-top:10px;">
+  <div class="kpi-title">💥 โอกาสที่เสียไป</div>
+  <div class="kpi-value red">
+    ${(investUnits - cashUnits).toLocaleString()} หน่วย
+  </div>
+  <div style="opacity:0.7; font-size:12px; margin-top:5px;">
+    ≈ ${((investUnits - cashUnits) * itemPrice).toLocaleString()} บาท
+  </div>
+</div>
+
+<div class="kpi-card" style="margin-top:10px;">
+  <div class="kpi-title">⚖️ เปรียบเทียบผลลัพธ์</div>
+  <div class="kpi-value">
+    โตต่างกัน <b class="green">${ratio} เท่า</b>
+  </div>
+  <div style="opacity:0.7; font-size:12px; margin-top:5px;">
+    ⏳ ภายใน ${endAge - startAge} ปี ทำให้ผลต่างขยายแบบทวีคูณ
+  </div>
+</div>
 `;
 
 
