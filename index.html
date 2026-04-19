@@ -203,8 +203,42 @@ button {
 
 <!-- STEP 4 -->
 <div class="step" id="step4">
-<label>ชื่อสินค้า</label>
-<input id="itemName" placeholder="เช่น ข้าวแกง">
+<!-- <label>ชื่อสินค้า</label>
+<input id="itemName" placeholder="เช่น ข้าวแกง"> -->
+
+  <label>🍛 เลือกสินค้าครองชีพ</label>
+
+<select id="itemName" onchange="toggleCustomItem()" style="
+  width:100%;
+  padding:12px;
+  margin-top:5px;
+  border-radius:10px;
+  border:none;
+  background:#2a2a2a;
+  color:#fff;
+">
+  <option value="ข้าวแกง">🍛 ข้าวแกง (อาหารพื้นฐาน)</option>
+  <option value="ข้าวมันไก่">🍗 ข้าวมันไก่</option>
+  <option value="ก๋วยเตี๋ยว">🍜 ก๋วยเตี๋ยว</option>
+  <option value="กาแฟ">☕ กาแฟ</option>
+  <option value="น้ำมัน">⛽ น้ำมันรถ</option>
+  <option value="ค่าไฟ">💡 ค่าไฟ</option>
+  <option value="มือถือ">📱 มือถือ</option>
+  <option value="ทองคำ">🪙 ทองคำ</option>
+  <option value="custom">✍️ กรอกเอง</option>
+</select>
+
+<input id="customItemName" placeholder="กรอกสินค้าเอง เช่น ค่าเช่าห้อง"
+style="
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border-radius:10px;
+  border:none;
+  background:#2a2a2a;
+  color:#fff;
+  display:none;
+">
 
 <label>ราคาต่อหน่วย</label>
 <input type="number" id="itemPrice" placeholder="เช่น 30 บาท">
@@ -360,6 +394,19 @@ function animate(chart, labels, invest, cash){
   }, 200);
 }
 
+
+  function toggleCustomItem(){
+  const val = document.getElementById("itemName").value;
+  const custom = document.getElementById("customItemName");
+
+  if(val === "custom"){
+    custom.style.display = "block";
+  } else {
+    custom.style.display = "none";
+  }
+}
+  
+
 function calculate(){
 
   const assetName = document.getElementById('assetName').value;
@@ -370,7 +417,14 @@ function calculate(){
 
   const inflation = +document.getElementById('inflation').value / 100;
 
-  const itemName = document.getElementById('itemName').value;
+  // const itemName = document.getElementById('itemName').value;
+
+  let itemName = document.getElementById("itemName").value;
+
+if(itemName === "custom"){
+  itemName = document.getElementById("customItemName").value;
+}
+  
   const itemPrice = +document.getElementById('itemPrice').value;
 
   const months = (endAge - startAge) * 12;
