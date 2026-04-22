@@ -248,14 +248,27 @@ style="
 </div>
 
 <!-- STEP 5 -->
-<div class="step" id="step5">
+<!-- <div class="step" id="step5">
 <h3>พร้อมคำนวณ</h3>
 
 <div class="btn-row">
   <button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
   <button class="primary" onclick="calculate()">คำนวณ</button>
 </div>
+</div> -->
+
+  <div class="step" id="step5">
+<h3>พร้อมคำนวณ</h3>
+
+<label>🔐 รหัสยืนยัน</label>
+<input type="password" id="accessCode" placeholder="กรอกรหัสก่อนคำนวณ">
+
+<div class="btn-row">
+  <button class="secondary" onclick="prevStep()">ย้อนกลับ</button>
+  <button class="primary" onclick="calculate()">คำนวณ</button>
 </div>
+</div>
+  
 
 </div>
 
@@ -405,7 +418,20 @@ function animate(chart, labels, invest, cash){
 }
   
 
-function calculate(){
+// function calculate(){
+
+  function calculate(){
+
+  const code = document.getElementById("accessCode").value;
+
+  if(code !== "***4"){
+    Swal.fire({
+      icon: 'error',
+      title: 'รหัสไม่ถูกต้อง',
+      text: 'กรุณากรอกรหัสให้ถูกต้องก่อนคำนวณ'
+    });
+    return;
+  }
 
   const assetName = document.getElementById('assetName').value;
   const monthly = +document.getElementById('monthly').value;
