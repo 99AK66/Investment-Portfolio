@@ -364,8 +364,22 @@ function nextStep(){
   }
 }
 
-function prevStep(){
+// function prevStep(){
+//   if(currentStep > 1) currentStep--;
+//   showStep(currentStep);
+
+//   if(currentStep !== 5){
+//     hideResult();
+//   }
+// }
+
+  function prevStep(){
   if(currentStep > 1) currentStep--;
+
+  // 🔥 ล้างรหัสทุกครั้งที่ย้อน
+  const codeInput = document.getElementById("accessCode");
+  if(codeInput) codeInput.value = "";
+
   showStep(currentStep);
 
   if(currentStep !== 5){
@@ -420,9 +434,10 @@ function animate(chart, labels, invest, cash){
 
 // function calculate(){
 
-  function calculate(){
+function calculate(){
 
-  const code = document.getElementById("accessCode").value;
+  const codeInput = document.getElementById("accessCode");
+  const code = codeInput.value;
 
   if(code !== "***4"){
     Swal.fire({
@@ -430,8 +445,12 @@ function animate(chart, labels, invest, cash){
       title: 'รหัสไม่ถูกต้อง',
       text: 'กรุณากรอกรหัสให้ถูกต้องก่อนคำนวณ'
     });
+
+    codeInput.value = ""; // 🔥 ล้างรหัส
     return;
   }
+
+  codeInput.value = ""; // 🔥 ล้างรหัสหลังใช้สำเร็จ
 
   const assetName = document.getElementById('assetName').value;
   const monthly = +document.getElementById('monthly').value;
